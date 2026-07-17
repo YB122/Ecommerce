@@ -1,0 +1,30 @@
+{
+  "provider": "google",
+  "sub": "109789748563853978365",
+  "id": "109789748563853978365",
+  "displayName": "youssef benyamine",
+  "name": { "givenName": "youssef", "familyName": "benyamine" },
+  "given_name": "youssef",
+  "family_name": "benyamine",
+  "email_verified": true,
+  "verified": true,
+  "email": "youssefbenyamine2eme@gmail.com",
+  "emails": [{ "value": "youssefbenyamine2eme@gmail.com", "type": "account" }],
+  "photos": [
+    {
+      "value": "https://lh3.googleusercontent.com/a/ACg8ocJAYTggh85JPn1LUnLKhrbHjEIRbKUuwvaK6JxQ1GEPV9uAAsPv=s96-c",
+      "type": "default"
+    }
+  ],
+  "picture": "https://lh3.googleusercontent.com/a/ACg8ocJAYTggh85JPn1LUnLKhrbHjEIRbKUuwvaK6JxQ1GEPV9uAAsPv=s96-c",
+  "_raw": "{\n \"sub\": \"109789748563853978365\",\n \"name\": \"youssef benyamine\",\n \"given_name\": \"youssef\",\n \"family_name\": \"benyamine\",\n \"picture\": \"https://lh3.googleusercontent.com/a/ACg8ocJAYTggh85JPn1LUnLKhrbHjEIRbKUuwvaK6JxQ1GEPV9uAAsPv\\u003ds96-c\",\n \"email\": \"youssefbenyamine2eme@gmail.com\",\n \"email_verified\": true\n}",
+  "_json": {
+    "sub": "109789748563853978365",
+    "name": "youssef benyamine",
+    "given_name": "youssef",
+    "family_name": "benyamine",
+    "picture": "https://lh3.googleusercontent.com/a/ACg8ocJAYTggh85JPn1LUnLKhrbHjEIRbKUuwvaK6JxQ1GEPV9uAAsPv=s96-c",
+    "email": "youssefbenyamine2eme@gmail.com",
+    "email_verified": true
+  }
+}

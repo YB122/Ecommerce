@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Next&period;js E-Commerce Performance &mdash; A 360&deg; Study Guide</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+/* From extension million-views.reactive-md */
+/**
+ * Styles for JSX Interactive Preview in VS Code Markdown Preview
+ *
+ * CONTROL LAYER ONLY - Component content is styled by Tailwind SSR
+ *
+ * These styles control the preview container UI:
+ * - .jsx-live container with border
+ * - .jsx-live-render for component output
+ * - .jsx-live-error for error display
+ * - .rmd-card branded card for external packages (full mode)
+ * - .mv-minimal-placeholder logo-only placeholder (minimal mode)
+ * - .mv-motion-placeholder for blank-rendering motion components
+ *
+ * Component content styling is handled by Tailwind v4 which generates
+ * CSS at render time for the specific utility classes used.
+ *
+ * CONVENTIONS:
+ * - All elements use box-sizing: border-box
+ * - Sizes use rem (1rem = 16px) for scalability
+ * - 1px borders kept as px for crispness
+ */
+
+:root {
+  /* PARITY CALIBRATION CONSTANTS
+     Synchronizes horizontal gutters between Markdown Preview (SSR) and Interactive Preview (Webview).
+     The Goal: Scrollbars appear/disappear at the EXACT same sidebar width. */
+
+  /* 1. OBSERVED: The physical padding VS Code injects into the Markdown Preview body.
+     Measurement shows ~48px in centered views. Snapped to 32px (2rem) for calibration. */
+  --rmd-parity-external-body-padding: 32px;
+
+  /* 2. TARGET: The total physical gutter (Body + Container) we want on each side of the device bezel.
+     Snapped to 32px (2rem) for a tighter, high-density layout. */
+  --rmd-parity-target-total-gutter: 32px;
+
+  /* 3. DERIVED: The actual padding applied to .jsx-live.
+     Markdown Preview already has ~48px body padding, so we add 0 here. */
+  --rmd-parity-internal-fence-padding: 0px;
+
+  --rmd-preview-padding-bottom: 50px;
+}
+
+/* V1.1.0 PARITY FIX: Synchronize scrollbar behavior with Interactive Preview. */
+body {
+  scrollbar-gutter: stable;
+}
+
+/* ============================================================================
+ * Global Reset for Extension UI
+ * ============================================================================ */
+
+.jsx-live,
+.jsx-live *,
+.jsx-live *::before,
+.jsx-live *::after {
+  box-sizing: border-box;
+}
+
+/* Container for a single JSX/TSX live fence */
+.jsx-live {
+  position: relative;
+  margin: 1.5rem 0;
+  padding: 0.75rem 0;
+  /* Horizontal padding removed to give bezel maximum breathing room */
+  overflow: visible;
+}
+
+/* Header area (Parity with Interactive Preview) */
+.section-header {
+  font-size: 0.6875rem;
+  /* 11px */
+  font-weight: 500;
+  color: var(--vscode-foreground);
+  margin-bottom: 0.5rem;
+  /* 8px */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.375rem;
+}
+
+.section-title-area {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  flex: 1;
+  min-width: 0;
+  opacity: 0.7;
+}
+
+.section-badge {
+  font-size: 0.5625rem;
+  /* 9px */
+  padding: 0.0625rem 0.25rem;
+  border-radius: 0.1875rem;
+  background: var(--vscode-panel-border, #e0e0e0);
+  color: var(--vscode-foreground);
+  white-space: nowrap;
+}
+
+/* Render area - This is the scroller for the physical viewport */
+.jsx-live-render {
+  padding: 0;
+  min-height: 2.5rem;
+  /* DEFENSIVE RESET: Prevent VS Code's markdown styles from leaking into designs. */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  font-size: 16px;
+  /* Sovereign base size */
+  line-height: normal;
+  /* Neutralize VS Code's 1.6x default */
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Ensure components don't inherit "Markdown Boldness" or other VS Code defaults */
+.jsx-live-render strong,
+.jsx-live-render b {
+  font-weight: bold;
+}
+
+.jsx-live-render h1,
+.jsx-live-render h2,
+.jsx-live-render h3,
+.jsx-live-render h4,
+.jsx-live-render h5,
+.jsx-live-render h6 {
+  font-weight: bold;
+  font-size: inherit;
+  border-bottom: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Fallback for when no device emulation is used */
+.jsx-live:not([data-rmd-device-spec]) .jsx-live-render {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+}
+
+/* Dark/light theme adjustments for render area */
+body.vscode-dark .jsx-live-render {
+  background: var(--vscode-editor-background, #1e1e1e);
+  color: var(--vscode-editor-foreground, #d4d4d4);
+}
+
+body.vscode-light .jsx-live-render {
+  background: #ffffff;
+  color: #333333;
+}
+
+/* Error state (actual errors - unbranded high visibility) */
+.jsx-live-error-box .mv-error-display {
+  padding: 1rem;
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  border-radius: 6px;
+  color: #991b1b;
+  margin: 1rem 0;
+}
+
+.jsx-live-error-box .mv-error-display pre {
+  margin-top: 0.75rem;
+  padding: 0.5rem;
+  background: #fee2e2;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #b91c1c;
+}
+
+body.vscode-dark .jsx-live-error-box .mv-error-display {
+  background: #450a0a;
+  border-color: #7f1d1d;
+  color: #fca5a5;
+}
+
+body.vscode-dark .jsx-live-error-box .mv-error-display pre {
+  background: #7f1d1d;
+  color: #fecaca;
+}
+
+/* Error state (within branded card) */
+.jsx-live-has-error .jsx-live-error {
+  padding: 0.75rem 1rem;
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+.mv-alert-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mv-alert-header svg {
+  flex-shrink: 0;
+}
+
+.jsx-live-has-error .jsx-live-error strong {
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.jsx-live-has-error .jsx-live-error pre {
+  margin: 0;
+  padding: 0.5rem;
+  background: #fee2e2;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+body.vscode-dark .jsx-live-has-error .jsx-live-error {
+  background: #450a0a;
+  color: #fca5a5;
+}
+
+body.vscode-dark .jsx-live-has-error .jsx-live-error pre {
+  background: #7f1d1d;
+}
+
+/* ============================================================================
+ * Code-Only Mode with Slim Footer
+ * Used when previewOverlay is "none" and component can't render
+ * Shows original code with a subtle 2rem amber footer
+ * ============================================================================ */
+
+.jsx-live-code-only {
+  display: flex;
+  flex-direction: column;
+}
+
+.jsx-live-code-only .jsx-live-code {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  background: var(--vscode-textCodeBlock-background, #f5f5f5);
+  font-family: var(--vscode-editor-font-family, 'Consolas', 'Monaco', monospace);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  overflow-x: auto;
+  border-bottom: none;
+  border-radius: 0;
+}
+
+.jsx-live-code-only .jsx-live-code code {
+  background: transparent;
+  padding: 0;
+}
+
+body.vscode-dark .jsx-live-code-only .jsx-live-code {
+  background: var(--vscode-textCodeBlock-background, #2d2d2d);
+}
+
+/* Slim footer - subtle amber background */
+.mv-slim-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.375rem 0.75rem;
+  background: oklch(0.96 0.04 85);
+  /* Very light amber */
+  border-top: 1px solid oklch(0.88 0.06 85);
+  font-size: 0.6875rem;
+  color: oklch(0.45 0.08 60);
+  gap: 0.75rem;
+}
+
+body.vscode-dark .mv-slim-footer {
+  background: oklch(0.25 0.03 60);
+  /* Dark amber tint */
+  border-top-color: oklch(0.35 0.04 60);
+  color: oklch(0.75 0.06 60);
+}
+
+.mv-slim-footer-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  /* Allow shrinking */
+  overflow: hidden;
+}
+
+.mv-slim-footer-logo {
+  flex-shrink: 0;
+  display: block;
+  width: 1rem;
+  height: 1rem;
+  background-image: url('../images/logo.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.6;
+  transition: opacity 0.15s ease;
+}
+
+.mv-slim-footer-logo:hover {
+  opacity: 1;
+}
+
+.mv-slim-footer-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  ;
+}
+
+.mv-slim-footer-cta {
+  flex-shrink: 0;
+  /* Never shrink the CTA */
+  white-space: nowrap;
+}
+
+.mv-slim-footer-cta kbd {
+  display: inline-block;
+  padding: 0.0625rem 0.3125rem;
+  margin-right: 0.25rem;
+  background: var(--vscode-keybindingLabel-background, rgba(0, 0, 0, 0.06));
+  border: 1px solid var(--vscode-keybindingLabel-border, rgba(0, 0, 0, 0.1));
+  border-radius: 0.1875rem;
+  font-size: 0.625rem;
+  font-family: var(--vscode-editor-font-family);
+  color: var(--vscode-keybindingLabel-foreground, inherit);
+}
+
+body.vscode-dark .mv-slim-footer-cta kbd {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* ============================================================================
+ * Minimal Placeholder (logo + text mode)
+ * Used when previewOverlay is set to "minimal"
+ * Centered logo with contextual help text
+ * ============================================================================ */
+
+.mv-minimal-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 6.25rem;
+  padding: 1.25rem 1rem;
+  background: oklch(0.9677 0.0095 140.52 / 0.15);
+  border-radius: 0.25rem;
+  text-align: center;
+}
+
+body.vscode-dark .mv-minimal-placeholder {
+  background: oklch(0.25 0.02 140 / 0.15);
+}
+
+.mv-minimal-logo {
+  display: block;
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+}
+
+.mv-minimal-logo:hover {
+  opacity: 0.8;
+}
+
+.mv-minimal-logo .mv-brand-logo {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+.mv-minimal-text {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--vscode-foreground);
+  opacity: 0.7;
+}
+
+.mv-minimal-hint {
+  margin: 0;
+  font-size: 0.6875rem;
+  color: var(--vscode-descriptionForeground);
+  opacity: 0.8;
+}
+
+.mv-minimal-hint kbd {
+  display: inline-block;
+  padding: 0.0625rem 0.3125rem;
+  background: var(--vscode-keybindingLabel-background, var(--vscode-button-secondaryBackground));
+  border: 1px solid var(--vscode-keybindingLabel-border, var(--vscode-widget-border));
+  border-radius: 0.1875rem;
+  font-size: 0.625rem;
+  font-family: var(--vscode-editor-font-family);
+  color: var(--vscode-keybindingLabel-foreground, var(--vscode-foreground));
+}
+
+/* ============================================================================
+ * Million Views Branded Card (for unsupported packages)
+ * Strategy: VS Code theme variables for structure, brand green for accents
+ * Brand: #22c55e (green-500), #16a34a (green-600), #dcfce7 (green-100)
+ * ============================================================================ */
+
+.rmd-card {
+  --rmd-brand: #22c55e;
+  --rmd-brand-hover: #16a34a;
+  --rmd-brand-subtle: #dcfce7;
+  --rmd-brand-text: #166534;
+
+  background: var(--vscode-editor-background);
+  border: 1px solid var(--vscode-panel-border, var(--vscode-widget-border));
+  border-left: 3px solid var(--rmd-brand);
+  border-radius: 0.375rem;
+  overflow: hidden;
+  font-family: var(--vscode-font-family);
+}
+
+.rmd-card-header {
+  padding: 0.625rem 0.875rem;
+  border-bottom: 1px solid var(--vscode-panel-border, var(--vscode-widget-border));
+  background: var(--vscode-sideBar-background, var(--vscode-editor-background));
+}
+
+.mv-brand-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: var(--vscode-foreground);
+  transition: color 0.15s;
+}
+
+.mv-brand-logo {
+  width: 1.5rem;
+  height: 1.5rem;
+  background-image: url('../images/logo.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.mv-brand-link:hover {
+  color: var(--rmd-brand);
+}
+
+.mv-brand-name {
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.rmd-card-body {
+  padding: 0.875rem 1rem;
+}
+
+.rmd-card-title {
+  margin: 0 0 0.375rem 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--vscode-foreground);
+}
+
+.rmd-card-text {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.75rem;
+  color: var(--vscode-descriptionForeground);
+  line-height: 1.5;
+}
+
+.rmd-card-text strong {
+  color: var(--vscode-foreground);
+}
+
+.rmd-card-muted {
+  font-size: 0.6875rem;
+  opacity: 0.8;
+  margin-top: 0.625rem;
+}
+
+.rmd-card-cta {
+  margin-top: 0.875rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--vscode-panel-border, var(--vscode-widget-border));
+}
+
+.rmd-card-cta .rmd-card-text {
+  margin-bottom: 0.25rem;
+}
+
+.rmd-card-steps {
+  margin: 0.5rem 0 0.75rem 0;
+  padding-left: 1.25rem;
+  list-style: decimal;
+}
+
+.rmd-card-steps li {
+  font-size: 0.75rem;
+  color: var(--vscode-foreground);
+  line-height: 1.6;
+  margin-bottom: 0.25rem;
+}
+
+.rmd-card-note {
+  font-size: 0.6875rem;
+  font-style: italic;
+  opacity: 0.85;
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}
+
+.rmd-card-note a {
+  color: var(--rmd-brand);
+}
+
+.rmd-card-text kbd {
+  display: inline-block;
+  padding: 0.125rem 0.375rem;
+  background: var(--vscode-keybindingLabel-background, var(--vscode-button-secondaryBackground));
+  border: 1px solid var(--vscode-keybindingLabel-border, var(--vscode-widget-border));
+  border-radius: 0.1875rem;
+  font-size: 0.6875rem;
+  font-family: var(--vscode-editor-font-family);
+  color: var(--vscode-keybindingLabel-foreground, var(--vscode-foreground));
+  box-shadow: 0 1px 0 var(--vscode-widget-shadow, rgba(0, 0, 0, 0.1));
+}
+
+.mv-packages-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin-bottom: 0.5rem;
+  justify-content: flex-start;
+}
+
+.mv-package-name {
+  display: inline-block;
+  padding: 0.1875rem 0.5rem;
+  background: var(--rmd-brand-subtle);
+  color: var(--rmd-brand-text);
+  border-radius: 0.25rem;
+  font-size: 0.6875rem;
+  font-family: var(--vscode-editor-font-family);
+  font-weight: 500;
+}
+
+.mv-package-bundled {
+  display: inline-block;
+  padding: 0.125rem 0.375rem;
+  background: var(--vscode-badge-background);
+  color: var(--vscode-badge-foreground);
+  border-radius: 0.1875rem;
+  font-size: 0.625rem;
+  font-family: var(--vscode-editor-font-family);
+  opacity: 0.85;
+}
+
+.rmd-card-actions {
+  padding: 0.625rem 1rem;
+  background: var(--vscode-sideBar-background, var(--vscode-editor-background));
+  border-top: 1px solid var(--vscode-panel-border, var(--vscode-widget-border));
+}
+
+.mv-action-link {
+  font-size: 0.6875rem;
+  color: var(--rmd-brand);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.mv-action-link:hover {
+  color: var(--rmd-brand-hover);
+  text-decoration: underline;
+}
+
+/* Dark mode: adjust brand colors for better contrast */
+body.vscode-dark .rmd-card {
+  --rmd-brand-subtle: #14532d;
+  --rmd-brand-text: #bbf7d0;
+}
+
+/* ============================================================================
+ * Blank Animation Placeholder (BAP) (for blank-rendering motion components)
+ * Displayed when motion code uses initial={{ opacity: 0 }} or similar
+ * ============================================================================ */
+
+.mv-motion-placeholder {
+  position: relative;
+  min-height: 7.5rem;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: oklch(0.9677 0.0095 140.52 / 0.25);
+  border-radius: 0.25rem;
+}
+
+body.vscode-dark .mv-motion-placeholder {
+  background: oklch(0.25 0.02 140 / 0.25);
+}
+
+.mv-motion-placeholder-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 17.5rem;
+}
+
+.mv-motion-placeholder-logo {
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 0.75rem;
+  background-image: url('../images/logo.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.3;
+}
+
+.mv-motion-placeholder-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--vscode-foreground);
+  opacity: 0.7;
+}
+
+.mv-motion-placeholder-text {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.75rem;
+  color: var(--vscode-descriptionForeground);
+  line-height: 1.5;
+  opacity: 0.7;
+}
+
+.mv-motion-placeholder-text code {
+  padding: 0.0625rem 0.25rem;
+  background: var(--vscode-textCodeBlock-background, rgba(0, 0, 0, 0.1));
+  border-radius: 0.1875rem;
+  font-family: var(--vscode-editor-font-family);
+  font-size: 0.6875rem;
+}
+
+.mv-motion-placeholder-cta {
+  margin: 0.5rem 0 0 0;
+  font-size: 0.75rem;
+  color: var(--vscode-foreground);
+  opacity: 0.7;
+}
+
+.mv-motion-placeholder-cta kbd {
+  display: inline-block;
+  padding: 0.125rem 0.375rem;
+  background: var(--vscode-keybindingLabel-background, var(--vscode-button-secondaryBackground));
+  border: 1px solid var(--vscode-keybindingLabel-border, var(--vscode-widget-border));
+  border-radius: 0.1875rem;
+  font-size: 0.6875rem;
+  font-family: var(--vscode-editor-font-family);
+  color: var(--vscode-keybindingLabel-foreground, var(--vscode-foreground));
+  box-shadow: 0 1px 0 var(--vscode-widget-shadow, rgba(0, 0, 0, 0.1));
+}
+
+/* ============================================================================
+ * EIP (Error Intercept Placeholder) Styles
+ * Used by both Markdown and Interactive Preview for consistent EIP cards
+ * ============================================================================ */
+
+/* ============================================================================
+ * Code-Only Mode with Slim Footer
+ * Used when previewOverlay is "none" and component can't render
+ * ============================================================================ */
+
+.jsx-live-code-only {
+  display: flex;
+  flex-direction: column;
+}
+
+.jsx-live-code-only .jsx-live-code {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  background: var(--vscode-textCodeBlock-background, #f5f5f5);
+  font-family: var(--vscode-editor-font-family, 'Consolas', 'Monaco', monospace);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  overflow-x: auto;
+  border-bottom: none;
+  border-radius: 0;
+}
+
+.jsx-live-code-only .jsx-live-code code {
+  background: transparent;
+  padding: 0;
+}
+
+body.vscode-dark .jsx-live-code-only .jsx-live-code {
+  background: var(--vscode-textCodeBlock-background, #2d2d2d);
+}
+
+/* Slim footer - subtle amber background */
+.mv-slim-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.375rem 0.75rem;
+  background: oklch(0.96 0.04 85);
+  /* Very light amber */
+  border-top: 1px solid oklch(0.88 0.06 85);
+  font-size: 0.6875rem;
+  color: oklch(0.45 0.08 60);
+  gap: 0.75rem;
+}
+
+body.vscode-dark .mv-slim-footer {
+  background: oklch(0.25 0.03 60);
+  /* Dark amber tint */
+  border-top-color: oklch(0.35 0.04 60);
+  color: oklch(0.75 0.06 60);
+}
+
+.mv-slim-footer-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  /* Allow shrinking */
+  overflow: hidden;
+}
+
+.mv-slim-footer-logo {
+  flex-shrink: 0;
+  display: block;
+  width: 1rem;
+  height: 1rem;
+  background-image: url('../images/logo.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.6;
+  transition: opacity 0.15s ease;
+}
+
+.mv-slim-footer-logo:hover {
+  opacity: 1;
+}
+
+.mv-slim-footer-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mv-slim-footer-cta {
+  flex-shrink: 0;
+  /* Never shrink the CTA */
+  white-space: nowrap;
+}
+
+.mv-slim-footer-cta kbd {
+  display: inline-block;
+  padding: 0.0625rem 0.3125rem;
+  margin-right: 0.25rem;
+  background: var(--vscode-keybindingLabel-background, rgba(0, 0, 0, 0.06));
+  border: 1px solid var(--vscode-keybindingLabel-border, rgba(0, 0, 0, 0.1));
+  border-radius: 0.1875rem;
+  font-size: 0.625rem;
+  font-family: var(--vscode-editor-font-family);
+  color: var(--vscode-keybindingLabel-foreground, inherit);
+}
+
+body.vscode-dark .mv-slim-footer-cta kbd {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* ============================================================================
+ * Minimal Placeholder (logo + text mode)
+ * Used when previewOverlay is set to "minimal"
+ * ============================================================================ */
+
+.jsx-live-unsupported {
+  padding: 1rem;
+}
+
+.mv-minimal-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 6.25rem;
+  padding: 1.25rem 1rem;
+  background: oklch(0.9677 0.0095 140.52 / 0.15);
+  border-radius: 0.25rem;
+  text-align: center;
+}
+
+body.vscode-dark .mv-minimal-placeholder {
+  background: oklch(0.25 0.02 140 / 0.15);
+}
+
+.mv-minimal-logo {
+  display: block;
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+}
+
+.mv-minimal-logo:hover {
+  opacity: 0.8;
+}
+
+.mv-minimal-logo .mv-brand-logo {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+.mv-brand-logo {
+  width: 1.5rem;
+  height: 1.5rem;
+  background-image: url('../images/logo.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.mv-minimal-text {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--vscode-foreground);
+  opacity: 0.7;
+}
+
+.mv-minimal-hint {
+  margin: 0;
+  font-size: 0.6875rem;
+  color: var(--vscode-descriptionForeground);
+  opacity: 0.8;
+}
+
+.mv-minimal-hint kbd {
+  display: inline-block;
+  padding: 0.0625rem 0.3125rem;
+  background: var(--vscode-keybindingLabel-background, var(--vscode-button-secondaryBackground));
+  border: 1px solid var(--vscode-keybindingLabel-border, var(--vscode-widget-border));
+  border-radius: 0.1875rem;
+  font-size: 0.625rem;
+  font-family: var(--vscode-editor-font-family);
+  color: var(--vscode-keybindingLabel-foreground, var(--vscode-foreground));
+}
+
+.mv-packages-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  justify-content: flex-start;
+}
+
+.mv-package-name {
+  font-family: var(--vscode-editor-font-family, monospace);
+  font-size: 0.6875rem;
+  background: var(--rmd-brand-subtle);
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.1875rem;
+  color: var(--rmd-brand-text);
+}
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="nextjs-e-commerce-performance--a-360-study-guide">Next.js E-Commerce Performance — A 360° Study Guide</h1>
+<blockquote>
+<p>Scope: Next.js 16 (App Router, Cache Components stable, Turbopack default). If your project is on Next.js 14/15, the rendering model differs in important ways — these are called out explicitly below so you don't apply the wrong mental model to the wrong version.</p>
+</blockquote>
+<p>Performance in a real e-commerce app is never one thing. It's six layers stacked on top of each other, and a slow site is almost always a problem in one specific layer that generic advice (&quot;use Image component&quot;, &quot;enable caching&quot;) doesn't fix. Study it in this order:</p>
+<ol>
+<li><strong>Rendering &amp; caching strategy</strong> — what gets computed when, and how often</li>
+<li><strong>Network &amp; infrastructure</strong> — where the bytes travel</li>
+<li><strong>Asset delivery</strong> — images, fonts, JS/CSS payload</li>
+<li><strong>Client runtime</strong> — what the browser's main thread actually does</li>
+<li><strong>Data layer</strong> — database, search, APIs</li>
+<li><strong>Observability</strong> — how you prove any of this worked</li>
+</ol>
+<p>E-commerce is the hardest category to get this right in, because a single PDP (Product Detail Page) mixes static content (description), semi-static content (price, with promotions), and fully dynamic content (stock, personalized recommendations, cart state) — all on one route.</p>
+<hr>
+<h2 id="1-rendering--caching-strategy-the-foundation-everything-else-sits-on">1. Rendering &amp; Caching Strategy (the foundation everything else sits on)</h2>
+<p>This is the layer that determines everything downstream. Get it wrong and no amount of image optimization saves you.</p>
+<h3 id="11-the-core-trade-off">1.1 The core trade-off</h3>
+<table>
+<thead>
+<tr>
+<th>Strategy</th>
+<th>TTFB</th>
+<th>Freshness</th>
+<th>Server load</th>
+<th>Best for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Static (SSG)</td>
+<td>Excellent</td>
+<td>Stale until rebuild</td>
+<td>None</td>
+<td>Marketing pages, legal pages</td>
+</tr>
+<tr>
+<td>ISR / time-based revalidation</td>
+<td>Excellent</td>
+<td>Eventually consistent</td>
+<td>Low</td>
+<td>Category pages, blog/CMS content</td>
+</tr>
+<tr>
+<td>SSR (force-dynamic)</td>
+<td>Depends on backend</td>
+<td>Always fresh</td>
+<td>High</td>
+<td>Cart, checkout, account pages</td>
+</tr>
+<tr>
+<td>Client-side fetch (CSR)</td>
+<td>Fast shell, slow data</td>
+<td>Always fresh</td>
+<td>Shifted to client</td>
+<td>Live search, dashboards</td>
+</tr>
+<tr>
+<td><strong>PPR (Partial Prerendering)</strong></td>
+<td>Excellent (static shell) + fresh holes</td>
+<td>Mixed, per-component</td>
+<td>Low-medium</td>
+<td><strong>Most e-commerce pages</strong></td>
+</tr>
+</tbody>
+</table>
+<p>PPR is the one most people haven't internalized yet because it's genuinely new (stable as of Next.js 16): a single route can serve an instantly-loading static shell <strong>and</strong> stream in dynamic, per-request content in the same response, instead of forcing the whole route into one bucket.</p>
+<h3 id="12-nextjs-16-cache-components-is-now-explicit-and-opt-in">1.2 Next.js 16: Cache Components is now explicit and opt-in</h3>
+<p>This is the single biggest mental model shift from Next 14/15. In the old model, <code>fetch()</code> was cached by default unless you opted out. In Next.js 16 with Cache Components enabled, <strong>nothing is cached unless you explicitly say so</strong> — which removes the classic &quot;why is my data stale and I never told it to cache&quot; class of bugs.</p>
+<pre><code class="language-ts"><span class="hljs-comment">// next.config.ts</span>
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">type</span> { <span class="hljs-title class_">NextConfig</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;next&#x27;</span>
+
+<span class="hljs-keyword">const</span> <span class="hljs-attr">nextConfig</span>: <span class="hljs-title class_">NextConfig</span> = {
+  <span class="hljs-attr">cacheComponents</span>: <span class="hljs-literal">true</span>, <span class="hljs-comment">// unlocks PPR + &#x27;use cache&#x27; + cacheLife/cacheTag</span>
+}
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> nextConfig
+</code></pre>
+<p>Once enabled, <code>cookies()</code>, <code>headers()</code>, <code>searchParams</code>, or any uncached async data access marks a component as dynamic automatically — you don't need <code>export const dynamic = 'force-dynamic'</code> scattered everywhere; you just wrap dynamic pieces in <code>&lt;Suspense&gt;</code> and Next.js figures out the static/dynamic boundary for you.</p>
+<p><strong>Applying this to a PDP — the realistic e-commerce pattern:</strong></p>
+<pre><code class="language-tsx"><span class="hljs-comment">// app/product/[slug]/page.tsx</span>
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_">Suspense</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react&#x27;</span>
+<span class="hljs-keyword">import</span> { cacheLife, cacheTag } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;next/cache&#x27;</span>
+
+<span class="hljs-comment">// Static-ish data: description, images, SEO metadata — changes rarely</span>
+<span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">getProductCore</span>(<span class="hljs-params">slug: string</span>) {
+  <span class="hljs-string">&#x27;use cache&#x27;</span>
+  <span class="hljs-title function_">cacheLife</span>({ <span class="hljs-attr">stale</span>: <span class="hljs-number">300</span>, <span class="hljs-attr">revalidate</span>: <span class="hljs-number">900</span>, <span class="hljs-attr">expire</span>: <span class="hljs-number">3600</span> }) <span class="hljs-comment">// 5min/15min/1hr</span>
+  <span class="hljs-title function_">cacheTag</span>(<span class="hljs-string">`product-<span class="hljs-subst">${slug}</span>`</span>)
+
+  <span class="hljs-keyword">const</span> res = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetch</span>(<span class="hljs-string">`<span class="hljs-subst">${process.env.API_URL}</span>/products/<span class="hljs-subst">${slug}</span>`</span>)
+  <span class="hljs-keyword">return</span> res.<span class="hljs-title function_">json</span>()
+}
+
+<span class="hljs-comment">// Genuinely dynamic: live stock, personalized price/promo — never cache this</span>
+<span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">getLiveStock</span>(<span class="hljs-params">slug: string</span>) {
+  <span class="hljs-keyword">const</span> res = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetch</span>(<span class="hljs-string">`<span class="hljs-subst">${process.env.API_URL}</span>/products/<span class="hljs-subst">${slug}</span>/stock`</span>, {
+    <span class="hljs-attr">cache</span>: <span class="hljs-string">&#x27;no-store&#x27;</span>,
+  })
+  <span class="hljs-keyword">return</span> res.<span class="hljs-title function_">json</span>()
+}
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">StockBadge</span>(<span class="hljs-params">{ slug }: { slug: string }</span>) {
+  <span class="hljs-keyword">return</span> (
+    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">Suspense</span> <span class="hljs-attr">fallback</span>=<span class="hljs-string">{</span>&lt;<span class="hljs-attr">span</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;skeleton h-4 w-20&quot;</span> /&gt;</span>}&gt;
+      <span class="hljs-tag">&lt;<span class="hljs-name">LiveStock</span> <span class="hljs-attr">slug</span>=<span class="hljs-string">{slug}</span> /&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">Suspense</span>&gt;</span></span>
+  )
+}
+
+<span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">LiveStock</span>(<span class="hljs-params">{ slug }: { slug: string }</span>) {
+  <span class="hljs-keyword">const</span> stock = <span class="hljs-keyword">await</span> <span class="hljs-title function_">getLiveStock</span>(slug)
+  <span class="hljs-keyword">return</span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span>&gt;</span>{stock.available ? &#x27;In stock&#x27; : &#x27;Out of stock&#x27;}<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+}
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">ProductPage</span>(<span class="hljs-params">{ params }: { params: <span class="hljs-built_in">Promise</span>&lt;{ slug: string }&gt; }</span>) {
+  <span class="hljs-keyword">const</span> { slug } = <span class="hljs-keyword">await</span> params <span class="hljs-comment">// params is async in Next 15+ — see note below</span>
+  <span class="hljs-keyword">const</span> product = <span class="hljs-keyword">await</span> <span class="hljs-title function_">getProductCore</span>(slug)
+
+  <span class="hljs-keyword">return</span> (
+    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">article</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>{product.name}<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>{product.description}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">StockBadge</span> <span class="hljs-attr">slug</span>=<span class="hljs-string">{slug}</span> /&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">article</span>&gt;</span></span>
+  )
+}
+</code></pre>
+<p><strong>Inventory webhook → instant invalidation, no waiting for the revalidate window:</strong></p>
+<pre><code class="language-ts"><span class="hljs-comment">// app/api/webhooks/inventory/route.ts</span>
+<span class="hljs-keyword">import</span> { revalidateTag } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;next/cache&#x27;</span>
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">POST</span>(<span class="hljs-params">req: Request</span>) {
+  <span class="hljs-keyword">const</span> { productSlug } = <span class="hljs-keyword">await</span> req.<span class="hljs-title function_">json</span>()
+  <span class="hljs-title function_">revalidateTag</span>(<span class="hljs-string">`product-<span class="hljs-subst">${productSlug}</span>`</span>)
+  <span class="hljs-keyword">return</span> <span class="hljs-title class_">Response</span>.<span class="hljs-title function_">json</span>({ <span class="hljs-attr">revalidated</span>: <span class="hljs-literal">true</span> })
+}
+</code></pre>
+<p>This gives you the speed of a fully static page for the 95% of the PDP that doesn't change per-request, with the freshness of SSR for the 5% that does (stock, price overrides, &quot;12 people viewing this now&quot;).</p>
+<h3 id="13-if-youre-on-nextjs-1415-no-cache-components-yet">1.3 If you're on Next.js 14/15 (no Cache Components yet)</h3>
+<p>You'll still see this in a lot of production codebases, so know it: caching is controlled per-fetch via <code>next: { revalidate, tags }</code>, and route-level via <code>export const dynamic</code> / <code>export const revalidate</code>.</p>
+<pre><code class="language-ts"><span class="hljs-comment">// Next 14/15 model</span>
+<span class="hljs-keyword">const</span> res = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetch</span>(url, { <span class="hljs-attr">next</span>: { <span class="hljs-attr">revalidate</span>: <span class="hljs-number">900</span>, <span class="hljs-attr">tags</span>: [<span class="hljs-string">`product-<span class="hljs-subst">${slug}</span>`</span>] } })
+</code></pre>
+<p><strong>Anti-pattern to flag in code review:</strong> mixing <code>force-dynamic</code> at the page level with cached fetches inside — the page-level export wins and silently disables the caching you thought you had. Cache Components in Next 16 exists specifically because this implicit interaction was a constant source of bugs.</p>
+<h3 id="14-route-by-route-mapping-for-a-typical-store">1.4 Route-by-route mapping for a typical store</h3>
+<ul>
+<li><strong>Home / landing</strong>: static shell, ISR for promotional banners (<code>revalidate: 60</code>)</li>
+<li><strong>Category / PLP</strong>: PPR — static layout &amp; filters, dynamic price/stock per product card streamed</li>
+<li><strong>PDP</strong>: pattern above — <code>use cache</code> + tags for core data, <code>no-store</code> for stock/price-override</li>
+<li><strong>Search</strong>: almost always fully dynamic, usually delegated entirely to a search service (more in §5)</li>
+<li><strong>Cart / Checkout / Account</strong>: <code>force-dynamic</code>, never cached — this data is user-specific and the cost of serving stale cart data (wrong total, ghost item) is far worse than a slower TTFB</li>
+</ul>
+<p><strong>Pitfall:</strong> teams often cache too aggressively on cart/checkout to &quot;make it fast,&quot; then ship bugs where one user sees another's cart. Speed is never worth correctness on these routes — cap your ambition at &quot;fast enough,&quot; not &quot;fastest possible,&quot; there.</p>
+<p>📖 <a href="https://nextjs.org/docs/app/getting-started/caching">Caching docs</a> · <a href="https://nextjs.org/blog/next-16">Next.js 16 release notes</a> · <a href="https://nextjs.org/docs/app/getting-started/partial-prerendering">PPR explainer</a></p>
+<hr>
+<h2 id="2-network--infrastructure-layer">2. Network &amp; Infrastructure Layer</h2>
+<h3 id="21-runtime-choice-per-route">2.1 Runtime choice per route</h3>
+<p>Next.js 16 replaced <code>middleware.ts</code> with <code>proxy.ts</code> (runs on Node.js runtime, not Edge by default) to make the network boundary explicit. For route handlers/pages themselves you still choose:</p>
+<pre><code class="language-ts"><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> runtime = <span class="hljs-string">&#x27;edge&#x27;</span> <span class="hljs-comment">// or &#x27;nodejs&#x27; (default)</span>
+</code></pre>
+<ul>
+<li><strong>Edge runtime</strong>: lower cold-start latency, geographically distributed, but a restricted API surface (no native Node APIs, limited npm package support — this bites people using certain ORMs or crypto libs).</li>
+<li><strong>Node.js runtime</strong>: full compatibility, slightly higher cold start on serverless platforms.</li>
+</ul>
+<p>For an e-commerce app: lean on Edge for read-heavy, cacheable routes (category pages, search suggestion proxy) and Node.js for anything touching your ORM/payment SDK directly.</p>
+<h3 id="22-cdn-strategy">2.2 CDN strategy</h3>
+<ul>
+<li>Static assets (<code>_next/static</code>, images) should be CDN-cached with long <code>max-age</code> + immutable hashes (Next.js does this by default on Vercel; on self-hosted/Docker deployments behind CloudFront/Cloudflare, verify your cache headers match — this is the #1 thing self-hosted teams misconfigure).</li>
+<li>ISR pages benefit from being served at the edge so the &quot;stale-while-revalidate&quot; window is geographically close to the user, not just close to your origin server.</li>
+</ul>
+<h3 id="23-reduce-round-trips-before-they-happen">2.3 Reduce round trips before they happen</h3>
+<pre><code class="language-html"><span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">&quot;preconnect&quot;</span> <span class="hljs-attr">href</span>=<span class="hljs-string">&quot;https://js.stripe.com&quot;</span> /&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">&quot;dns-prefetch&quot;</span> <span class="hljs-attr">href</span>=<span class="hljs-string">&quot;https://www.googletagmanager.com&quot;</span> /&gt;</span>
+</code></pre>
+<p>Every third-party origin (payment SDK, analytics, review widgets) costs a DNS lookup + TLS handshake before the first byte. <code>preconnect</code> for things you'll definitely load this page; <code>dns-prefetch</code> for things you might load (e.g., a chat widget that appears after scroll).</p>
+<p>📖 <a href="https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#runtime">Edge and Node.js runtimes</a></p>
+<hr>
+<h2 id="3-asset-delivery">3. Asset Delivery</h2>
+<h3 id="31-images--the-single-biggest-lcp-lever-on-a-pdp">3.1 Images — the single biggest LCP lever on a PDP</h3>
+<pre><code class="language-tsx"><span class="hljs-keyword">import</span> <span class="hljs-title class_">Image</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;next/image&#x27;</span>
+
+&lt;<span class="hljs-title class_">Image</span>
+  src={product.<span class="hljs-property">heroImage</span>}
+  alt={product.<span class="hljs-property">name</span>}
+  width={<span class="hljs-number">800</span>}
+  height={<span class="hljs-number">800</span>}
+  priority <span class="hljs-comment">// tells Next.js this is likely your LCP element — skip lazy-loading it</span>
+  sizes=<span class="hljs-string">&quot;(max-width: 768px) 100vw, 50vw&quot;</span>
+/&gt;
+</code></pre>
+<ul>
+<li>Only mark <strong>one</strong> image <code>priority</code> per page — typically the hero/PDP main image. Marking everything priority defeats the purpose.</li>
+<li>Everything below the fold should lazy-load by default (the default behavior of <code>next/image</code> when <code>priority</code> is omitted).</li>
+<li>Serve AVIF/WebP via the built-in image optimizer; configure <code>remotePatterns</code> for your CMS/CDN image host in <code>next.config.ts</code>.</li>
+</ul>
+<p><strong>Common e-commerce anti-pattern:</strong> product card grids importing full-resolution images and letting CSS scale them down. You're shipping 2000px images for a 300px card — <code>next/image</code> with correct <code>sizes</code> fixes this, but only if <code>sizes</code> actually matches your CSS layout, not a guess.</p>
+<h3 id="32-fonts--render-blocking-is-the-enemy">3.2 Fonts — render-blocking is the enemy</h3>
+<pre><code class="language-tsx"><span class="hljs-keyword">import</span> { <span class="hljs-title class_">Inter</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;next/font/google&#x27;</span>
+
+<span class="hljs-keyword">const</span> inter = <span class="hljs-title class_">Inter</span>({ <span class="hljs-attr">subsets</span>: [<span class="hljs-string">&#x27;latin&#x27;</span>], <span class="hljs-attr">display</span>: <span class="hljs-string">&#x27;swap&#x27;</span> })
+</code></pre>
+<p><code>next/font</code> self-hosts Google Fonts at build time — no runtime request to <code>fonts.googleapis.com</code>, no render-blocking external request, no CLS from font swap (Next computes a fallback metric override automatically).</p>
+<h3 id="33-javascript-bundle">3.3 JavaScript bundle</h3>
+<pre><code class="language-tsx"><span class="hljs-keyword">import</span> dynamic <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;next/dynamic&#x27;</span>
+
+<span class="hljs-comment">// Reviews tab isn&#x27;t needed for first paint — defer it</span>
+<span class="hljs-keyword">const</span> <span class="hljs-title class_">ProductReviews</span> = <span class="hljs-title function_">dynamic</span>(<span class="hljs-function">() =&gt;</span> <span class="hljs-title function_">import</span>(<span class="hljs-string">&#x27;./ProductReviews&#x27;</span>), {
+  <span class="hljs-attr">loading</span>: <span class="hljs-function">() =&gt;</span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">ReviewsSkeleton</span> /&gt;</span></span>,
+})
+</code></pre>
+<p><strong>The barrel-file trap</strong> — extremely common in e-commerce UI built on icon libraries or component kits:</p>
+<pre><code class="language-ts"><span class="hljs-comment">// ❌ Pulls the entire icon library into your client bundle in many setups</span>
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_">ShoppingCart</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;some-icon-library&#x27;</span>
+
+<span class="hljs-comment">// ✅ Verify tree-shaking actually works for your bundler/library combo,</span>
+<span class="hljs-comment">// or import the specific module path the library exposes for this purpose</span>
+</code></pre>
+<p>Run <code>@next/bundle-analyzer</code> regularly, not once:</p>
+<pre><code class="language-ts"><span class="hljs-comment">// next.config.ts</span>
+<span class="hljs-keyword">import</span> withBundleAnalyzer <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@next/bundle-analyzer&#x27;</span>
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-title function_">withBundleAnalyzer</span>({ <span class="hljs-attr">enabled</span>: process.<span class="hljs-property">env</span>.<span class="hljs-property">ANALYZE</span> === <span class="hljs-string">&#x27;true&#x27;</span> })(nextConfig)
+</code></pre>
+<p>📖 <a href="https://nextjs.org/docs/app/api-reference/components/image">next/image</a> · <a href="https://nextjs.org/docs/app/api-reference/components/font">next/font</a> · <a href="https://www.npmjs.com/package/@next/bundle-analyzer">Bundle Analyzer</a></p>
+<hr>
+<h2 id="4-client-runtime--what-the-main-thread-is-actually-doing">4. Client Runtime — what the main thread is actually doing</h2>
+<p>This is where <strong>Core Web Vitals</strong> live, and where e-commerce-specific UX maps directly to metrics:</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>What it measures</th>
+<th>E-commerce example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>LCP</strong> (Largest Contentful Paint)</td>
+<td>Time to render the biggest visible element</td>
+<td>The hero product image on a PDP</td>
+</tr>
+<tr>
+<td><strong>INP</strong> (Interaction to Next Paint — replaced FID)</td>
+<td>Responsiveness of any interaction</td>
+<td>Click &quot;Add to Cart&quot; → does the UI respond instantly?</td>
+</tr>
+<tr>
+<td><strong>CLS</strong> (Cumulative Layout Shift)</td>
+<td>Visual stability</td>
+<td>A promo banner injecting above the fold after load, shoving the price down</td>
+</tr>
+</tbody>
+</table>
+<h3 id="41-minimize-the-use-client-boundary-dont-eliminate-it">4.1 Minimize the <code>'use client'</code> boundary, don't eliminate it</h3>
+<p>The instinct people have is &quot;Server Components = fast, Client Components = slow,&quot; which oversimplifies it. The real rule: <strong>push the boundary to the smallest leaf component possible.</strong></p>
+<pre><code class="language-tsx"><span class="hljs-comment">// ❌ The whole product page becomes a client component because one button needs state</span>
+<span class="hljs-string">&#x27;use client&#x27;</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">ProductPage</span>(<span class="hljs-params">{ product }</span>) {
+  <span class="hljs-keyword">const</span> [qty, setQty] = <span class="hljs-title function_">useState</span>(<span class="hljs-number">1</span>)
+  <span class="hljs-keyword">return</span> ( <span class="hljs-comment">/* entire page, including static description, ships as client JS */</span> )
+}
+
+<span class="hljs-comment">// ✅ Only the interactive leaf is client-side</span>
+<span class="hljs-comment">// ProductPage stays a Server Component</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">ProductPage</span>(<span class="hljs-params">{ product }</span>) {
+  <span class="hljs-keyword">return</span> (
+    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">article</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>{product.name}<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>{product.description}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">AddToCartControl</span> <span class="hljs-attr">productId</span>=<span class="hljs-string">{product.id}</span> /&gt;</span> {/* client component, small */}
+    <span class="hljs-tag">&lt;/<span class="hljs-name">article</span>&gt;</span></span>
+  )
+}
+</code></pre>
+<p>The description, specs, and structured data never hydrate — zero JS cost for content that's never interactive.</p>
+<h3 id="42-react-compiler-stable-in-next-16">4.2 React Compiler (stable in Next 16)</h3>
+<pre><code class="language-ts"><span class="hljs-comment">// next.config.ts</span>
+<span class="hljs-keyword">const</span> nextConfig = { <span class="hljs-attr">reactCompiler</span>: <span class="hljs-literal">true</span> }
+</code></pre>
+<p>This automatically memoizes components, reducing (not eliminating) the need for manual <code>useMemo</code>/<code>useCallback</code>. Still hand-optimize genuinely expensive work — e.g., recalculating price across a dozen variant combinations on every keystroke in a configurator — the compiler optimizes re-renders, it doesn't make an O(n²) calculation cheap.</p>
+<h3 id="43-inp-specifically-for-add-to-cart">4.3 INP specifically for &quot;Add to Cart&quot;</h3>
+<p>The button click must:</p>
+<ol>
+<li>Give immediate visual feedback (optimistic UI state change) — don't wait for the server round trip to update the cart icon</li>
+<li>Use React's <code>useOptimistic</code> or local state to show &quot;Added ✓&quot; instantly, then reconcile with the server response</li>
+</ol>
+<pre><code class="language-tsx"><span class="hljs-string">&#x27;use client&#x27;</span>
+<span class="hljs-keyword">import</span> { useOptimistic } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react&#x27;</span>
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">AddToCartButton</span>(<span class="hljs-params">{ productId, addToCart }: { productId: string; addToCart: (id: string) =&gt; <span class="hljs-built_in">Promise</span>&lt;<span class="hljs-keyword">void</span>&gt; }</span>) {
+  <span class="hljs-keyword">const</span> [optimisticState, setOptimisticState] = <span class="hljs-title function_">useOptimistic</span>(<span class="hljs-string">&#x27;idle&#x27;</span>)
+
+  <span class="hljs-keyword">return</span> (
+    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">button</span>
+      <span class="hljs-attr">onClick</span>=<span class="hljs-string">{async</span> () =&gt;</span> {
+        setOptimisticState(&#x27;added&#x27;)
+        await addToCart(productId)
+      }}
+    &gt;
+      {optimisticState === &#x27;added&#x27; ? &#x27;Added ✓&#x27; : &#x27;Add to Cart&#x27;}
+    <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></span>
+  )
+}
+</code></pre>
+<p>📖 <a href="https://web.dev/articles/inp">web.dev: INP</a> · <a href="https://react.dev/learn/react-compiler">React Compiler</a> · <a href="https://react.dev/reference/react/useOptimistic">useOptimistic</a></p>
+<hr>
+<h2 id="5-data-layer--database-search-apis">5. Data Layer — database, search, APIs</h2>
+<p>This is the layer that's invisible in Lighthouse but dictates your floor on TTFB no matter how good your caching is.</p>
+<h3 id="51-the-n1-problem-the-most-common-orm-mistake-on-plps">5.1 The N+1 problem (the most common ORM mistake on PLPs)</h3>
+<pre><code class="language-ts"><span class="hljs-comment">// ❌ N+1: one query for products, then one query per product for its images</span>
+<span class="hljs-keyword">const</span> products = <span class="hljs-keyword">await</span> prisma.<span class="hljs-property">product</span>.<span class="hljs-title function_">findMany</span>()
+<span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> p <span class="hljs-keyword">of</span> products) {
+  p.<span class="hljs-property">images</span> = <span class="hljs-keyword">await</span> prisma.<span class="hljs-property">image</span>.<span class="hljs-title function_">findMany</span>({ <span class="hljs-attr">where</span>: { <span class="hljs-attr">productId</span>: p.<span class="hljs-property">id</span> } })
+}
+
+<span class="hljs-comment">// ✅ One query, joined</span>
+<span class="hljs-keyword">const</span> products = <span class="hljs-keyword">await</span> prisma.<span class="hljs-property">product</span>.<span class="hljs-title function_">findMany</span>({
+  <span class="hljs-attr">include</span>: { <span class="hljs-attr">images</span>: <span class="hljs-literal">true</span> },
+  <span class="hljs-comment">// select only what the PLP card actually renders — don&#x27;t fetch description,</span>
+  <span class="hljs-comment">// long-form specs, or review text you don&#x27;t need on this view</span>
+})
+</code></pre>
+<h3 id="52-indexing-for-the-filters-your-plp-actually-exposes">5.2 Indexing for the filters your PLP actually exposes</h3>
+<p>If your category page supports filtering by category + price range + in-stock, a composite index matching that access pattern matters more than indexing every column individually:</p>
+<pre><code class="language-sql"><span class="hljs-keyword">CREATE</span> INDEX idx_products_category_price_stock
+<span class="hljs-keyword">ON</span> products (category_id, price, in_stock);
+</code></pre>
+<p>Without it, &quot;filter by category, sort by price&quot; on a catalog of 200k SKUs does a sequential scan every time — this is usually the actual root cause when a PLP &quot;feels slow&quot; despite a perfectly cached frontend.</p>
+<h3 id="53-connection-pooling-in-serverless-deployments">5.3 Connection pooling in serverless deployments</h3>
+<p>Serverless functions (including Vercel's deployment model) spin up new execution contexts frequently. Without pooling, each one opens its own DB connection, and you exhaust your database's connection limit under load — a real production failure mode, not a theoretical one.</p>
+<pre><code>DATABASE_URL=&quot;postgresql://user:pass@host:5432/db?pgbouncer=true&amp;connection_limit=1&quot;
+</code></pre>
+<p>Use PgBouncer, Prisma Accelerate, or your cloud provider's serverless-aware pooling (e.g., RDS Proxy, Neon's pooled connection string).</p>
+<h3 id="54-search-dont-run-ilike-query-against-your-products-table-at-scale">5.4 Search: don't run <code>ILIKE '%query%'</code> against your products table at scale</h3>
+<p>This is the textbook e-commerce performance mistake. A <code>LIKE</code>/<code>ILIKE</code> wildcard query can't use a standard B-tree index and degrades badly as the catalog grows. Past a few thousand SKUs, delegate search to a purpose-built engine:</p>
+<ul>
+<li><strong>Algolia / Typesense / Meilisearch</strong> — managed or self-hosted, sub-50ms typeahead, built-in typo tolerance and faceting</li>
+<li><strong>Postgres full-text search / <code>pg_trgm</code></strong> — a reasonable middle ground if you don't want another service yet, still meaningfully better than <code>ILIKE</code></li>
+<li><strong>Elasticsearch/OpenSearch</strong> — when you need heavy faceted search at large scale and already run the ops for it</li>
+</ul>
+<p>Pair this with debounced client-side requests for autocomplete:</p>
+<pre><code class="language-tsx"><span class="hljs-keyword">const</span> debouncedQuery = <span class="hljs-title function_">useDebouncedValue</span>(query, <span class="hljs-number">200</span>) <span class="hljs-comment">// don&#x27;t fire a request per keystroke</span>
+</code></pre>
+<h3 id="55-pagination">5.5 Pagination</h3>
+<p>Offset pagination (<code>OFFSET 10000 LIMIT 20</code>) gets progressively slower as the offset grows, because the database still has to scan and discard every preceding row. Cursor-based pagination (<code>WHERE id &gt; lastSeenId LIMIT 20</code>) stays flat regardless of depth — relevant for any catalog large enough that customers actually page deep, or for infinite-scroll PLPs.</p>
+<p>📖 <a href="https://www.prisma.io/docs/orm/prisma-client/queries/query-optimization-performance">Prisma performance docs</a> · <a href="https://www.postgresql.org/docs/current/indexes.html">Postgres indexing</a></p>
+<hr>
+<h2 id="6-e-commerce-specific-third-party-script-tax">6. E-Commerce-Specific Third-Party Script Tax</h2>
+<p>This deserves its own section because it's where e-commerce sites bleed performance that has nothing to do with your own code: analytics, A/B testing tools, chat widgets, review platforms, payment SDKs, tag managers — often 5-10 separate third-party scripts on a single PDP.</p>
+<pre><code class="language-tsx"><span class="hljs-keyword">import</span> <span class="hljs-title class_">Script</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;next/script&#x27;</span>
+
+&lt;<span class="hljs-title class_">Script</span> src=<span class="hljs-string">&quot;https://widget.reviewplatform.com/embed.js&quot;</span> strategy=<span class="hljs-string">&quot;lazyOnload&quot;</span> /&gt;
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">Script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;https://www.googletagmanager.com/gtm.js&quot;</span> <span class="hljs-attr">strategy</span>=<span class="hljs-string">&quot;afterInteractive&quot;</span> /&gt;</span></span>
+</code></pre>
+<ul>
+<li><code>beforeInteractive</code> — only for scripts that must run before hydration (rare; consent management sometimes needs this)</li>
+<li><code>afterInteractive</code> (default) — analytics, tag managers</li>
+<li><code>lazyOnload</code> — chat widgets, review embeds, anything not needed for the initial experience</li>
+<li><code>worker</code> (experimental, via Partytown) — runs heavy third-party scripts in a web worker, off the main thread entirely</li>
+</ul>
+<p><strong>Specific to checkout:</strong> load the payment SDK (Stripe.js, PayPal SDK, etc.) only on the checkout route, not globally via a root layout. It's a common mistake to put it in <code>app/layout.tsx</code> &quot;to be safe,&quot; which means every visitor on every page pays for it even if 90% never reach checkout.</p>
+<p>📖 <a href="https://nextjs.org/docs/app/api-reference/components/script">next/script</a> · <a href="https://partytown.builder.io/">Partytown</a></p>
+<hr>
+<h2 id="7-build--deployment">7. Build &amp; Deployment</h2>
+<ul>
+<li><strong>Turbopack</strong> is the default bundler as of Next.js 16 (stable), with significantly faster builds and Fast Refresh — if you're still on an explicit webpack config from an older project, that's the main migration item before upgrading.</li>
+<li><strong><code>output: 'standalone'</code></strong> for Docker deployments — produces a minimal self-contained build instead of requiring the full <code>node_modules</code> tree in your image.</li>
+<li><strong>Avoid full-site revalidation storms</strong>: if your CMS triggers a revalidation webhook on every content edit and you call <code>revalidatePath('/')</code> broadly instead of tagging specific products/categories, you can cause a &quot;thundering herd&quot; where every cached page regenerates simultaneously under load. Tag granularly (§1.2) instead.</li>
+<li><strong>Monorepo (Turborepo)</strong> caching in CI matters once you have a shared design system/component library alongside the storefront — remote caching avoids rebuilding unchanged packages on every CI run.</li>
+</ul>
+<hr>
+<h2 id="8-observability--prove-it-dont-guess-it">8. Observability — prove it, don't guess it</h2>
+<p>You cannot performance-tune by feel past a certain point. Build measurement into the workflow, not as an afterthought:</p>
+<pre><code class="language-tsx"><span class="hljs-comment">// app/_components/WebVitals.tsx</span>
+<span class="hljs-string">&#x27;use client&#x27;</span>
+<span class="hljs-keyword">import</span> { useReportWebVitals } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;next/web-vitals&#x27;</span>
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">WebVitals</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-title function_">useReportWebVitals</span>(<span class="hljs-function">(<span class="hljs-params">metric</span>) =&gt;</span> {
+    <span class="hljs-comment">// send to your analytics endpoint — this is REAL USER data (RUM),</span>
+    <span class="hljs-comment">// which matters more than lab data because it reflects actual devices/networks</span>
+    <span class="hljs-title function_">fetch</span>(<span class="hljs-string">&#x27;/api/vitals&#x27;</span>, { <span class="hljs-attr">method</span>: <span class="hljs-string">&#x27;POST&#x27;</span>, <span class="hljs-attr">body</span>: <span class="hljs-title class_">JSON</span>.<span class="hljs-title function_">stringify</span>(metric) })
+  })
+  <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>
+}
+</code></pre>
+<ul>
+<li><strong>Lab data</strong> (Lighthouse, locally or in CI) tells you about regressions before merge.</li>
+<li><strong>Field data</strong> (RUM, Chrome UX Report) tells you what real customers on real devices actually experience — and is what Google uses for Core Web Vitals in search ranking, so lab-only optimization can mislead you about real-world impact.</li>
+</ul>
+<p>Gate PRs on a performance budget in CI:</p>
+<pre><code class="language-yaml"><span class="hljs-comment"># .github/workflows/lighthouse.yml</span>
+<span class="hljs-bullet">-</span> <span class="hljs-attr">uses:</span> <span class="hljs-string">treosh/lighthouse-ci-action@v11</span>
+  <span class="hljs-attr">with:</span>
+    <span class="hljs-attr">urls:</span> <span class="hljs-string">|
+      https://staging.example.com/
+      https://staging.example.com/product/sample-slug
+</span>    <span class="hljs-attr">budgetPath:</span> <span class="hljs-string">./lighthouse-budget.json</span>
+</code></pre>
+<p>📖 <a href="https://nextjs.org/docs/app/api-reference/functions/use-report-web-vitals">useReportWebVitals</a> · <a href="https://github.com/GoogleChrome/lighthouse-ci">Lighthouse CI</a> · <a href="https://web.dev/articles/vitals">web.dev Core Web Vitals</a></p>
+<hr>
+<h2 id="9-a-study-roadmap-since-your-senior-framed-this-as-study">9. A Study Roadmap (since your senior framed this as &quot;study&quot;)</h2>
+<p>A reasonable order to go deep, layer by layer, rather than trying to absorb all of this at once:</p>
+<ol>
+<li><strong>Week 1 — Rendering model</strong>: Server vs Client Components, PPR, Cache Components (<code>use cache</code>, <code>cacheLife</code>, <code>cacheTag</code>). Build a toy PDP that mixes a cached static section with a streamed dynamic stock indicator, like §1.2.</li>
+<li><strong>Week 2 — Assets &amp; Core Web Vitals</strong>: <code>next/image</code>, <code>next/font</code>, bundle analysis, then measure LCP/INP/CLS on your own build with Lighthouse and explain <em>why</em> each number is what it is.</li>
+<li><strong>Week 3 — Data layer</strong>: find (or deliberately create) an N+1 query in a side project, fix it, measure the query count before/after with your ORM's query logging. Set up a basic search service and compare it against <code>ILIKE</code>.</li>
+<li><strong>Week 4 — Infra &amp; observability</strong>: deploy with the CDN/runtime choices from §2, wire up <code>useReportWebVitals</code>, add a Lighthouse CI budget gate to a sample repo's CI pipeline.</li>
+</ol>
+<p>By the end of that, you won't just be able to say &quot;I used <code>next/image</code>&quot; — you'll be able to explain <em>which layer</em> a given performance problem lives in when your senior asks, which is really what &quot;360°&quot; means here: not knowing every trick, but knowing where to look first.</p>
+<hr>
+<h2 id="reference-index">Reference Index</h2>
+<ul>
+<li><a href="https://nextjs.org/docs/app/getting-started/caching">Next.js Caching (current model)</a></li>
+<li><a href="https://nextjs.org/blog/next-16">Next.js 16 release notes</a></li>
+<li><a href="https://nextjs.org/docs/app/getting-started/partial-prerendering">Partial Prerendering</a></li>
+<li><a href="https://nextjs.org/docs/app/api-reference/components/image">next/image API</a></li>
+<li><a href="https://nextjs.org/docs/app/api-reference/components/font">next/font API</a></li>
+<li><a href="https://nextjs.org/docs/app/api-reference/components/script">next/script API</a></li>
+<li><a href="https://react.dev/learn/react-compiler">React Compiler</a></li>
+<li><a href="https://web.dev/articles/vitals">web.dev — Core Web Vitals</a></li>
+<li><a href="https://www.prisma.io/docs/orm/prisma-client/queries/query-optimization-performance">Prisma query optimization</a></li>
+<li><a href="https://github.com/GoogleChrome/lighthouse-ci">Lighthouse CI</a></li>
+</ul>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>

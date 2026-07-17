@@ -1,0 +1,74 @@
+[
+  {
+    "timestamp": "2026-06-14T10:15:30",
+    "timeZone": "Africa/Cairo",
+    "ipAddress": "192.168.1.45",
+    "type": "SECURITY_ALERT",
+    "potentialInjection": "SELECT * FROM users",
+    "message": "Possible injection attempt detected",
+    "level": "warn"
+  },
+  {
+    "timestamp": "2026-06-14T10:15:31",
+    "timeZone": "Africa/Cairo",
+    "ipAddress": "192.168.1.45",
+    "type": "SECURITY_ALERT",
+    "potentialInjection": "admin' --",
+    "message": "Possible injection attempt detected",
+    "level": "warn"
+  },
+  {
+    "timestamp": "2026-06-14T11:02:18",
+    "timeZone": "Africa/Cairo",
+    "ipAddress": "10.0.0.23",
+    "type": "SECURITY_ALERT",
+    "potentialInjection": "DROP TABLE products",
+    "message": "Possible injection attempt detected",
+    "level": "warn"
+  },
+  {
+    "timestamp": "2026-06-14T11:22:44",
+    "timeZone": "Africa/Cairo",
+    "ipAddress": "10.0.0.23",
+    "type": "SECURITY_ALERT",
+    "potentialInjection": "{$gt: \"\"}",
+    "message": "Possible injection attempt detected",
+    "level": "warn"
+  },
+  {
+    "timestamp": "2026-06-14T12:00:01",
+    "timeZone": "Africa/Cairo",
+    "ipAddress": "203.0.113.77",
+    "type": "SECURITY_ALERT",
+    "potentialInjection": "'+UNION+SELECT+null,null--",
+    "message": "Possible injection attempt detected",
+    "level": "warn"
+  },
+  {
+    "timestamp": "2026-06-14T13:45:22",
+    "timeZone": "Africa/Cairo",
+    "ipAddress": "198.51.100.12",
+    "type": "SECURITY_ALERT",
+    "potentialInjection": "1; DROP TABLE carts",
+    "message": "Possible injection attempt detected",
+    "level": "warn"
+  },
+  {
+    "timestamp": "2026-06-14T14:30:00",
+    "timeZone": "Africa/Cairo",
+    "ipAddress": "192.168.1.45",
+    "type": "SECURITY_ALERT",
+    "potentialInjection": "$regex.*",
+    "message": "Possible injection attempt detected",
+    "level": "warn"
+  },
+  {
+    "timestamp": "2026-06-14T15:00:33",
+    "timeZone": "Africa/Cairo",
+    "ipAddress": "10.0.0.23",
+    "type": "SECURITY_ALERT",
+    "potentialInjection": "UPDATE users SET role='admin'",
+    "message": "Possible injection attempt detected",
+    "level": "warn"
+  }
+]

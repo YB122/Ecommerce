@@ -1,0 +1,32 @@
+{
+  "user": {
+    "name": "Test User",
+    "email": "testuser@example.com",
+    "password": "TestPass123"
+  },
+  "admin": {
+    "name": "Test Admin",
+    "email": "testadmin@example.com",
+    "password": "AdminPass123"
+  },
+  "product": {
+    "name": "Test Product",
+    "price": 99.99,
+    "stock": 50
+  },
+  "category": {
+    "name": "Test Category"
+  },
+  "subcategory": {
+    "name": "Test Subcategory"
+  },
+  "shippingAddress": {
+    "fullName": "John Doe",
+    "phone": "+212600000000",
+    "street": "123 Main St",
+    "city": "Casablanca",
+    "state": "Grand Casablanca",
+    "zipCode": "20000",
+    "country": "Morocco"
+  }
+}

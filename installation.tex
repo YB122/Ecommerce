@@ -1,0 +1,893 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{tcolorbox}
+\usepackage{geometry}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{fontawesome}
+\usepackage{xcolor}
+\geometry{margin=2.5cm}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\definecolor{primaryblue}{RGB}{41, 128, 185}
+\definecolor{primarydark}{RGB}{44, 62, 80}
+\definecolor{successgreen}{RGB}{39, 174, 96}
+\definecolor{warnyellow}{RGB}{243, 156, 18}
+\definecolor{infobox}{RGB}{235, 245, 255}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=cyan,
+    pdftitle={E-Commerce Project Installation Guide},
+    pdfpagemode=FullScreen,
+}
+
+\title{
+    \vspace*{2cm}
+    {\Huge\textbf{\textcolor{primarydark}{E-Commerce Project}}}\\[0.3cm]
+    {\LARGE\textcolor{primaryblue}{Installation \& Setup Guide}}\\[0.5cm]
+    {\large Full-Stack Multi-Language E-Commerce Platform}\\[0.2cm]
+    {\large (English / French / Arabic)}\\[1.5cm]
+}
+\author{}
+\date{\large \today}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+\vfill
+
+\begin{center}
+    \begin{tcolorbox}[colback=infobox,colframe=primaryblue,width=0.9\textwidth]
+        \centering
+        \large\textbf{Project Overview}\\[0.3cm]
+        This project consists of three applications:\\
+        \textbf{Backend API} (Express + MongoDB + Redis)\\
+        \textbf{Admin Dashboard} (React-Admin + Vite)\\
+        \textbf{Storefront} (Next.js + Tailwind CSS)
+    \end{tcolorbox}
+\end{center}
+
+\vfill
+
+\newpage
+
+% ============================================================
+% TABLE OF CONTENTS
+% ============================================================
+\tableofcontents
+\newpage
+
+% ============================================================
+% SECTION 1: PREREQUISITES
+% ============================================================
+\section{Prerequisites}
+
+Before starting, make sure you have the following installed or accounts created:
+
+\begin{longtable}{p{3cm} p{4cm} p{7cm}}
+    \toprule
+    \textbf{Software} & \textbf{Version} & \textbf{Purpose} \\
+    \midrule
+    Node.js & $\ge$ 18 & JavaScript runtime for all apps \\
+    MongoDB & 7+ & Main database \\
+    MongoDB Compass & Latest & GUI for database management \\
+    Redis (Upstash) & Cloud & Caching, rate limiting, OTP \\
+    Git & Latest & Version control (optional) \\
+    VS Code & Latest & Code editor (recommended) \\
+    \bottomrule
+\end{longtable}
+
+\vspace{0.5cm}
+
+\textbf{Accounts needed:}
+\begin{itemize}
+    \item \href{https://upstash.com/}{Upstash} — Free Redis cloud database
+    \item \href{https://cloudinary.com/}{Cloudinary} — Image upload and CDN
+    \item \href{https://console.cloud.google.com/}{Google Cloud Console} — Google OAuth credentials
+    \item \href{https://stripe.com/}{Stripe} — Payment processing
+    \item \href{https://www.mongodb.com/atlas}{MongoDB Atlas} (optional) — Cloud database
+\end{itemize}
+
+\newpage
+
+% ============================================================
+% SECTION 2: NODE.JS
+% ============================================================
+\section{Node.js Installation}
+
+Node.js is required to run all three applications (backend, dashboard, and storefront).
+
+\subsection{Download and Install}
+
+\begin{enumerate}[leftmargin=*,itemsep=0.5em]
+    \item Visit \url{https://nodejs.org/}
+    \item Download the \textbf{LTS} version (18.x or higher — the left button)
+    \item Run the downloaded \texttt{.msi} installer
+    \item Click \textbf{Next} through the wizard (default settings are fine)
+    \item Make sure \textbf{"Add to PATH"} is checked during installation
+    \item Finish the installation
+\end{enumerate}
+
+\subsection{Verify Installation}
+
+Open a new terminal (Command Prompt or PowerShell) and run:
+
+\begin{lstlisting}[language=bash, caption=Verify Node.js and npm]
+node --version
+npm --version
+\end{lstlisting}
+
+You should see version numbers (e.g., \texttt{v18.17.0} and \texttt{10.8.0}).
+
+\begin{tcolorbox}[colback=infobox,colframe=primaryblue,title= YouTube Tutorial]
+    \href{https://www.youtube.com/watch?v=lt5D2EWZMN0}{\textbf{How to Install Node.js on Windows 11 — Amit Thinks (Updated 2025)}}
+    
+    \url{https://www.youtube.com/watch?v=lt5D2EWZMN0}
+\end{tcolorbox}
+
+\newpage
+
+% ============================================================
+% SECTION 3: MONGODB
+% ============================================================
+\section{MongoDB Installation}
+
+MongoDB is the primary database used by the backend API.
+
+\subsection{Option 1: Install MongoDB Locally (Recommended)}
+
+\begin{enumerate}[leftmargin=*,itemsep=0.5em]
+    \item Go to \url{https://www.mongodb.com/try/download/community}
+    \item Select your operating system (Windows)
+    \item Choose \textbf{MongoDB 7.0+ Community Server}
+    \item Click \textbf{Download}
+    \item Run the installer (\texttt{.msi} file)
+    \item Choose \textbf{"Complete"} setup type
+    \item \textbf{Important:} Check \textbf{"Install MongoDB Compass"} during installation
+    \item Complete the installation
+    \item MongoDB runs automatically as a Windows service
+\end{enumerate}
+
+\subsection{Verify MongoDB}
+
+Open Command Prompt or PowerShell and run:
+
+\begin{lstlisting}[language=bash, caption=Test MongoDB connection]
+mongosh
+\end{lstlisting}
+
+If successful, you will see the MongoDB shell with \texttt{test>} prompt.
+Type \texttt{exit} to leave.
+
+\begin{tcolorbox}[colback=infobox,colframe=primaryblue,title= YouTube Tutorial]
+    \href{https://www.youtube.com/watch?v=jvaBaxlTqU8}{\textbf{Install MongoDB, MongoDB Compass, and MongoDB Shell (mongosh) on Windows}}
+    
+    \url{https://www.youtube.com/watch?v=jvaBaxlTqU8}
+\end{tcolorbox}
+
+\subsection{Option 2: MongoDB Atlas (Cloud)}
+
+If you prefer not to install MongoDB locally, use MongoDB Atlas (free tier):
+
+\begin{enumerate}[leftmargin=*,itemsep=0.5em]
+    \item Go to \url{https://www.mongodb.com/atlas}
+    \item Click \textbf{"Try Free"} and sign up
+    \item Choose the \textbf{Free M0 Sandbox} cluster
+    \item Select a cloud provider and region close to you
+    \item Click \textbf{"Create Cluster"} (takes 1--3 minutes)
+    \item In \textbf{Database Access} tab:
+    \begin{itemize}
+        \item Click \textbf{"Add New Database User"}
+        \item Create a username and password
+        \item Choose \textbf{"Read and Write to Any Database"} privileges
+        \item Click \textbf{"Add User"}
+    \end{itemize}
+    \item In \textbf{Network Access} tab:
+    \begin{itemize}
+        \item Click \textbf{"Add IP Address"}
+        \item Click \textbf{"Allow Access from Anywhere"} (\texttt{0.0.0.0/0}) for development
+        \item Click \textbf{"Confirm"}
+    \end{itemize}
+    \item Click \textbf{"Connect"} $\rightarrow$ \textbf{"Connect your application"}
+    \item Copy the connection string (looks like \texttt{mongodb+srv://username:password@cluster.xxxxx.mongodb.net/})
+    \item Replace \texttt{<password>} with your user's password
+    \item Use this string as \texttt{MONGODB\_URI} in your \texttt{.env} file
+\end{enumerate}
+
+\begin{tcolorbox}[colback=infobox,colframe=primaryblue,title= YouTube Tutorial]
+    \href{https://www.youtube.com/watch?v=SFkXQZ3x6zM&t=82s}{\textbf{How to Get a Free MongoDB Database in the Cloud — Step-by-Step Setup}}
+    
+    \url{https://www.youtube.com/watch?v=SFkXQZ3x6zM&t=82s}
+\end{tcolorbox}
+
+\newpage
+
+% ============================================================
+% SECTION 4: MONGODB COMPASS
+% ============================================================
+\section{MongoDB Compass}
+
+MongoDB Compass is a graphical user interface (GUI) for MongoDB. It lets you view, query, and manage your data visually.
+
+\subsection{If Installed with MongoDB}
+
+Compass is installed automatically if you checked the box during MongoDB installation.
+
+\subsection{Standalone Installation}
+
+\begin{enumerate}[leftmargin=*,itemsep=0.5em]
+    \item Download from \url{https://www.mongodb.com/products/tools/compass}
+    \item Install and open the application
+    \item Paste your connection string (e.g., \texttt{mongodb://localhost:27017}) and click \textbf{"Connect"}
+    \item You can now browse databases, collections, and documents visually
+\end{enumerate}
+
+\begin{tcolorbox}[colback=infobox,colframe=primaryblue,title= YouTube Tutorial]
+    Same video as MongoDB installation above:
+    
+    \href{https://www.youtube.com/watch?v=jvaBaxlTqU8}{\textbf{Install MongoDB, MongoDB Compass, and MongoDB Shell (mongosh) on Windows}}
+    
+    \url{https://www.youtube.com/watch?v=jvaBaxlTqU8}
+\end{tcolorbox}
+
+\newpage
+
+% ============================================================
+% SECTION 5: REDIS (UPSTASH)
+% ============================================================
+\section{Redis Setup (Upstash Cloud)}
+
+This project uses \textbf{Upstash} — a cloud-based Redis service. No local installation is needed.
+
+\subsection{Why Upstash Instead of Local Redis?}
+
+\begin{itemize}
+    \item No installation or configuration required
+    \item Free tier (10,000 commands per day — enough for development)
+    \item Works anywhere without firewall or networking issues
+    \item Persistent storage with automatic backups
+\end{itemize}
+
+\subsection{Create an Upstash Account}
+
+\begin{enumerate}[leftmargin=*,itemsep=0.5em]
+    \item Go to \url{https://upstash.com/}
+    \item Click \textbf{"Start Free"} or \textbf{"Sign Up"}
+    \item Sign up using \textbf{GitHub} or \textbf{Google} (quickest)
+    \item You will be redirected to the console: \url{https://console.upstash.com/}
+\end{enumerate}
+
+\subsection{Create a Redis Database}
+
+\begin{enumerate}[leftmargin=*,itemsep=0.5em]
+    \item In the Upstash console, click \textbf{"Create Database"}
+    \item Give it a name (e.g., \texttt{e-commerce-redis})
+    \item Choose a region close to you (e.g., \textbf{Frankfurt} for Europe, \textbf{Ohio} for US East)
+    \item Leave the default settings
+    \item Click \textbf{"Create"}
+    \item You will see the database details page
+\end{enumerate}
+
+\subsection{Get the Connection URL}
+
+On the database details page, find and copy the \texttt{REDIS\_URL} (also called \texttt{REST URL}).
+It looks like:
+
+\begin{lstlisting}[caption=Redis connection URL example]
+rediss://default:AVM2AAI3ASDASD12345@refined-panda-100748.upstash.io:6379
+\end{lstlisting}
+
+This string goes into your \texttt{config/.env} file as:
+
+\begin{lstlisting}[caption=.env entry for Redis]
+REDIS_URL=rediss://default:YOUR_TOKEN@your-database.upstash.io:6379
+\end{lstlisting}
+
+\subsection{How Redis Is Used in This Project}
+
+\begin{itemize}
+    \item \textbf{IP Blocklist} — Blocks IP addresses that send too many malicious requests
+    \item \textbf{Rate Limiting} — Limits how fast users can send requests (prevent spam)
+    \item \textbf{OTP Storage} — Stores email verification codes temporarily
+    \item \textbf{Session Management} — Manages user sessions (if session-based auth is used)
+\end{itemize}
+
+\begin{tcolorbox}[colback=green!5!white,colframe=successgreen,title= Redis is Optional]
+    If Redis is unavailable or you skip setup, the application still works normally. Features like rate limiting and IP blocking are gracefully skipped with a warning log.
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=infobox,colframe=primaryblue,title= YouTube Tutorial]
+    \href{https://www.youtube.com/watch?v=lK2DmL7t5R8}{\textbf{Upstash Redis Tutorial — Get Started with Serverless Redis}}
+    
+    \url{https://www.youtube.com/watch?v=lK2DmL7t5R8}
+    
+    \textbf{Direct links:}
+    \begin{itemize}
+        \item Upstash website: \url{https://upstash.com/}
+        \item Upstash console: \url{https://console.upstash.com/redis/}
+    \end{itemize}
+\end{tcolorbox}
+
+\newpage
+
+% ============================================================
+% SECTION 6: EMAIL (GMAIL APP PASSWORD)
+% ============================================================
+\section{Email Setup (Gmail App Password)}
+
+The project uses Gmail to send:
+\begin{itemize}
+    \item Email verification links after signup
+    \item Password reset links
+\end{itemize}
+
+\subsection{Steps to Get Gmail App Password}
+
+\begin{enumerate}[leftmargin=*,itemsep=0.7em]
+    \item \textbf{Turn on 2-Step Verification} (required for App Passwords)
+    \begin{enumerate}
+        \item Go to \url{https://myaccount.google.com/security}
+        \item Under \textbf{"How you sign in to Google"}, click \textbf{"2-Step Verification"}
+        \item Follow the steps to enable it (requires a phone number)
+    \end{enumerate}
+    
+    \item \textbf{Generate an App Password}
+    \begin{enumerate}
+        \item Go to \url{https://myaccount.google.com/apppasswords}
+        \item (If asked, sign in to your Google account)
+        \item Under \textbf{"Select app"}, choose \textbf{Mail}
+        \item Under \textbf{"Select device"}, choose \textbf{Other (Custom name)}
+        \item Type a name like \texttt{"E-Commerce Backend"} or \texttt{"My App"}
+        \item Click \textbf{Generate}
+        \item Google will show a \textbf{16-character password} like:
+        
+        \begin{tcolorbox}[colback=yellow!10!white,colframe=warnyellow,title=Example App Password]
+            \centering
+            \Large\texttt{wceh rtqu flmu crle}
+        \end{tcolorbox}
+        
+        \item \textbf{Copy this password immediately} — you will not see it again
+    \end{enumerate}
+\end{enumerate}
+
+\subsection{Add to .env}
+
+\begin{lstlisting}[caption=Email configuration in config/.env]
+EMAIL = your-email@gmail.com
+PASSWORD = wcehrtquflmucrle   # Your 16-character app password (no spaces)
+\end{lstlisting}
+
+\begin{tcolorbox}[colback=red!5!white,colframe=red!75!black,title= Important Notes]
+    \begin{itemize}
+        \item You \textbf{must} use the App Password, NOT your regular Gmail password
+        \item Remove spaces from the generated password
+        \item If you change your Google account password, App Passwords are reset
+        \item If you don't see the App Passwords option, make sure 2-Step Verification is enabled
+    \end{itemize}
+\end{tcolorbox}
+
+\newpage
+
+% ============================================================
+% SECTION 7: GOOGLE OAUTH
+% ============================================================
+\section{Google OAuth Setup}
+
+Google OAuth allows users to sign up and log in using their Google account.
+
+\subsection{Create a Google Cloud Project}
+
+\begin{enumerate}[leftmargin=*,itemsep=0.5em]
+    \item Go to \url{https://console.cloud.google.com/}
+    \item Sign in with your Google account
+    \item Click the project dropdown at the top (next to "Google Cloud")
+    \item Click \textbf{"New Project"}
+    \item Give it a name (e.g., \texttt{"E-Commerce OAuth"})
+    \item Click \textbf{"Create"}
+    \item Make sure your new project is selected in the top bar
+\end{enumerate}
+
+\subsection{Configure OAuth Consent Screen}
+
+\begin{enumerate}[leftmargin=*,itemsep=0.5em]
+    \item Go to \textbf{APIs \& Services} $\rightarrow$ \textbf{OAuth consent screen}
+    \item Choose \textbf{"External"} (for testing with any Google account)
+    \item Click \textbf{"Create"}
+    \item Fill in:
+    \begin{itemize}
+        \item \textbf{App name}: \texttt{E-Commerce}
+        \item \textbf{User support email}: Your email
+        \item \textbf{Developer contact information}: Your email
+    \end{itemize}
+    \item Click \textbf{"Save and Continue"}
+    \item \textbf{Scopes}: Click \textbf{"Add or Remove Scopes"}, check:
+    \begin{itemize}
+        \item \texttt{.../auth/userinfo.email}
+        \item \texttt{.../auth/userinfo.profile}
+    \end{itemize}
+    \item Click \textbf{"Update"}, then \textbf{"Save and Continue"}
+    \item \textbf{Test Users}: Click \textbf{"Add Users"}, add your email
+    \item Click \textbf{"Save and Continue"}, then \textbf{"Back to Dashboard"}
+\end{enumerate}
+
+\subsection{Create OAuth 2.0 Credentials}
+
+\begin{enumerate}[leftmargin=*,itemsep=0.5em]
+    \item Go to \textbf{APIs \& Services} $\rightarrow$ \textbf{Credentials}
+    \item Click \textbf{"+ Create Credentials"} $\rightarrow$ \textbf{"OAuth client ID"}
+    \item Choose \textbf{"Web application"}
+    \item \textbf{Name}: \texttt{Web Client}
+    \item Under \textbf{"Authorized JavaScript Origins"}:
+    \begin{itemize}
+        \item Click \textbf{"Add URI"}
+        \item Add: \url{http://localhost:3007}
+    \end{itemize}
+    \item Under \textbf{"Authorized Redirect URIs"}:
+    \begin{itemize}
+        \item Click \textbf{"Add URI"}
+        \item Add: \url{http://localhost:3007/v1/auth/google/signup/callback}
+        \item Click \textbf{"Add URI"} again
+        \item Add: \url{http://localhost:3007/v1/auth/google/login/callback}
+    \end{itemize}
+    \item Click \textbf{"Create"}
+\end{enumerate}
+
+\subsection{Copy Credentials}
+
+After creating, a popup shows:
+\begin{itemize}
+    \item \textbf{Client ID}: \texttt{244052021863-xxxxx.apps.googleusercontent.com}
+    \item \textbf{Client Secret}: \texttt{GOCSPX-xxxxxxxxxxxx}
+\end{itemize}
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=warnyellow,title= Save These Values!]
+    \textbf{Copy both values} and add them to your \texttt{config/.env}:
+    
+    \begin{lstlisting}
+GOOGLE_CLIENT_ID = 244052021863-xxxxx.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET = GOCSPX-xxxxxxxxxxxx
+    \end{lstlisting}
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=infobox,colframe=primaryblue,title= YouTube Tutorial]
+    \href{https://www.youtube.com/watch?v=Q0a0594tOrc&t=8s}{\textbf{Google OAuth 2.0 Setup Tutorial}}
+    
+    \url{https://www.youtube.com/watch?v=Q0a0594tOrc&t=8s}
+\end{tcolorbox}
+
+\newpage
+
+% ============================================================
+% SECTION 8: CLOUDINARY
+% ============================================================
+\section{Cloudinary Setup (Image Uploads)}
+
+Cloudinary is used to upload, store, and transform product images.
+
+\subsection{Create a Cloudinary Account}
+
+\begin{enumerate}[leftmargin=*,itemsep=0.5em]
+    \item Go to \url{https://cloudinary.com/}
+    \item Click \textbf{"Sign Up for Free"}
+    \item You can sign up with Google, GitHub, or email
+    \item Verify your email address
+    \item You will be redirected to the Cloudinary Dashboard
+\end{enumerate}
+
+\subsection{Find Your Credentials}
+
+On the Cloudinary Dashboard, find these three values:
+
+\begin{enumerate}[leftmargin=*,itemsep=0.5em]
+    \item \textbf{Cloud Name} — Looks like \texttt{dwld0gbaj}
+    \item \textbf{API Key} — A number like \texttt{884793678717992}
+    \item \textbf{API Secret} — A string like \texttt{hZy1DbqQiwBJHbfKNDBjyaEP-Wo}
+\end{enumerate}
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=warnyellow,title= Add to .env]
+    \begin{lstlisting}
+Image_TYPE = CLOUDINARY
+CLOUDINARY_NAME = dwld0gbaj
+CLOUDINARY_KEY = 884793678717992
+CLOUDINARY_SECRET = hZy1DbqQiwBJHbfKNDBjyaEP-Wo
+    \end{lstlisting}
+\end{tcolorbox}
+
+\subsection{Optional: Fallback to Server Storage}
+
+If you don't want to use Cloudinary, you can set:
+
+\begin{lstlisting}
+Image_TYPE = SERVER
+SERVER = http://localhost:3007
+\end{lstlisting}
+
+This will store images on your server's local filesystem instead.
+
+\newpage
+
+% ============================================================
+% SECTION 9: STRIPE
+% ============================================================
+\section{Stripe Setup (Payments)}
+
+Stripe handles payment processing in the storefront.
+
+\subsection{Create a Stripe Account}
+
+\begin{enumerate}[leftmargin=*,itemsep=0.5em]
+    \item Go to \url{https://stripe.com/}
+    \item Click \textbf{"Start now"} or \textbf{"Sign up"}
+    \item Enter your email and create a password
+    \item Complete the onboarding (you can skip if asked for business details)
+\end{enumerate}
+
+\subsection{Get API Keys}
+
+\begin{enumerate}[leftmargin=*,itemsep=0.5em]
+    \item Log in to the Stripe Dashboard: \url{https://dashboard.stripe.com/}
+    \item Make sure you are in \textbf{"Test mode"} (toggle in the left sidebar)
+    \item Go to \textbf{Developers} $\rightarrow$ \textbf{API Keys}
+    \item You will find:
+    \begin{itemize}
+        \item \textbf{Publishable Key}: \texttt{pk\_test\_51TiY5yATJO...}
+        \item \textbf{Secret Key}: \texttt{sk\_test\_51TiY5yATJO...}
+    \end{itemize}
+    \item \textbf{Copy both keys}
+\end{enumerate}
+
+\subsection{Add to .env}
+
+\begin{lstlisting}[caption=Stripe configuration in config/.env]
+Publishable_key_Stripe = pk_test_51TiY5yATJO...
+Secret_key_Stripe = sk_test_51TiY5yATJO...
+\end{lstlisting}
+
+\begin{tcolorbox}[colback=green!5!white,colframe=successgreen,title= Test Mode]
+    Test mode keys start with \texttt{pk\_test\_} and \texttt{sk\_test\_}.\\
+    You can use test credit card number \texttt{4242 4242 4242 4242} for payments.
+    
+    For production, switch to \textbf{Live mode} and use live keys (start with \texttt{pk\_live\_} / \texttt{sk\_live\_}).
+\end{tcolorbox}
+
+\newpage
+
+% ============================================================
+% SECTION 10: FULL PROJECT SETUP
+% ============================================================
+\section{Full Project Setup}
+
+\subsection{Clone the Repository}
+
+\begin{lstlisting}[language=bash, caption=Clone the project]
+git clone <repository-url>
+cd e-commerce
+\end{lstlisting}
+
+\subsection{Project Structure}
+
+The project has three main folders:
+
+\begin{lstlisting}[caption=Project folder structure]
+e-commerce/
+  |-- e-commerce-back/     # Backend API (Express + MongoDB + Redis)
+  |-- e-commerce-Dash/     # Admin Dashboard (React-Admin + Vite)
+  |-- e-commerce-Next/     # Storefront (Next.js + Tailwind CSS)
+  |-- installation.tex      # This installation guide
+  |-- README.md             # Project documentation
+\end{lstlisting}
+
+\newpage
+
+% ============================================================
+% SECTION 11: BACKEND SETUP
+% ============================================================
+\section{Backend Setup (e-commerce-back)}
+
+\subsection{Install Dependencies}
+
+\begin{lstlisting}[language=bash, caption=Install backend packages]
+cd e-commerce-back
+npm install
+\end{lstlisting}
+
+\subsection{Configure Environment Variables}
+
+\begin{enumerate}[leftmargin=*,itemsep=0.5em]
+    \item Copy the example file:
+
+\begin{lstlisting}[language=bash]
+cp config/.env.example config/.env
+\end{lstlisting}
+
+    \item Edit \texttt{config/.env} with all the credentials you collected:
+
+\begin{lstlisting}[caption=Complete config/.env example]
+PORT = 3007
+EMAIL = your-email@gmail.com
+PASSWORD = your-16-char-app-password
+HASH = 10
+BASE_URL = http://localhost:3007
+SIGNATURE_ADMIN = signatureAdmin
+SIGNATURE_USER = signatureUser
+SIGNATURE_SUPER_ADMIN = signatureSuperAdmin
+ACCESS_TOKEN = 30m
+REFRESH_TOKEN = 1y
+VERIFY_SIGNATURE_MY = my
+MONGODB_URI = mongodb://localhost:27017/e-commerce
+GOOGLE_CLIENT_ID = your-client-id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET = GOCSPX-xxxxxxxxxxxx
+REDIS_URL = rediss://default:xxxxx@your-database.upstash.io:6379
+Image_TYPE = CLOUDINARY
+CLOUDINARY_NAME = your-cloud-name
+CLOUDINARY_KEY = your-api-key
+CLOUDINARY_SECRET = your-api-secret
+SHIPPING_COST_TYPE = fixed
+SHIPPING_COST_VALUE = 50
+CURRENCY = EGP
+Publishable_key_Stripe = pk_test_xxxxxxxxxxxx
+Secret_key_Stripe = sk_test_xxxxxxxxxxxx
+\end{lstlisting}
+
+\end{enumerate}
+
+\subsection{Run the Backend}
+
+\begin{lstlisting}[language=bash, caption=Start backend server]
+npm run dev
+\end{lstlisting}
+
+\begin{tcolorbox}[colback=green!5!white,colframe=successgreen,title= Server Running]
+    You should see:
+    
+    \texttt{Server running on port 3007}
+    
+    \texttt{database connected}
+\end{tcolorbox}
+
+\subsection{API Endpoints}
+
+Once running, the API is available at \url{http://localhost:3007/v1}
+
+\begin{itemize}
+    \item \texttt{POST /v1/auth/signup} — Register a new user
+    \item \texttt{POST /v1/auth/login} — Login
+    \item \texttt{GET /v1/products} — List active products
+    \item \texttt{GET /v1/category} — List categories
+    \item \texttt{GET /v1/subcategory} — List subcategories
+    \item And more...
+\end{itemize}
+
+\newpage
+
+% ============================================================
+% SECTION 12: DASHBOARD SETUP
+% ============================================================
+\section{Dashboard Setup (e-commerce-Dash)}
+
+React-Admin dashboard for managing products, categories, users, and orders.
+
+\subsection{Install Dependencies}
+
+\begin{lstlisting}[language=bash, caption=Install dashboard packages]
+cd e-commerce-Dash
+npm install
+\end{lstlisting}
+
+\subsection{Configure Environment Variables}
+
+Create a file named \texttt{.env} inside \texttt{e-commerce-Dash/}:
+
+\begin{lstlisting}[caption=.env for dashboard]
+VITE_API_URL=http://localhost:3007/v1
+\end{lstlisting}
+
+\subsection{Run the Dashboard}
+
+\begin{lstlisting}[language=bash, caption=Start dashboard]
+npm run dev
+\end{lstlisting}
+
+\begin{tcolorbox}[colback=green!5!white,colframe=successgreen]
+    Dashboard runs at \url{http://localhost:8000}
+\end{tcolorbox}
+
+\subsection{Dashboard Features}
+
+\begin{itemize}
+    \item \textbf{Categories} — Create, edit, list categories
+    \item \textbf{Subcategories} — Create, edit, group delete/restore
+    \item \textbf{Products} — Create, edit, list with variants management
+    \item \textbf{Orders} — View and manage customer orders
+    \item \textbf{Users} — View users, create admin accounts (super admin only)
+    \item \textbf{Analytics} — Revenue chart, order statistics
+    \item \textbf{Multi-language} — Switch between English, French, Arabic
+    \item \textbf{Themes} — Multiple themes (Soft, B\&W, Nano, etc.)
+\end{itemize}
+
+\newpage
+
+% ============================================================
+% SECTION 13: STOREFRONT SETUP
+% ============================================================
+\section{Storefront Setup (e-commerce-Next)}
+
+Next.js storefront for customers to browse and purchase products.
+
+\subsection{Install Dependencies}
+
+\begin{lstlisting}[language=bash, caption=Install storefront packages]
+cd e-commerce-Next
+npm install
+\end{lstlisting}
+
+\subsection{Configure Environment Variables}
+
+Create a file named \texttt{.env} inside \texttt{e-commerce-Next/}:
+
+\begin{lstlisting}[caption=.env for storefront]
+BACK_URL=http://localhost:3007
+NEXT_PUBLIC_SHIPPING_COST_TYPE=fixed
+NEXT_PUBLIC_SHIPPING_COST_VALUE=50
+\end{lstlisting}
+
+\subsection{Run the Storefront}
+
+\begin{lstlisting}[language=bash, caption=Start storefront]
+npm run dev
+\end{lstlisting}
+
+\begin{tcolorbox}[colback=green!5!white,colframe=successgreen]
+    Storefront runs at \url{http://localhost:3000}
+\end{tcolorbox}
+
+\subsection{Storefront Features}
+
+\begin{itemize}
+    \item \textbf{Home Page} — Featured products, categories
+    \item \textbf{Products Page} — Browse with filters, sort, search
+    \item \textbf{Product Detail} — View details, select variants, add to cart
+    \item \textbf{Cart} — Manage items, proceed to checkout
+    \item \textbf{Checkout} — Stripe payment integration
+    \item \textbf{User Account} — Login, signup, profile, orders
+    \item \textbf{Wishlist} — Save favorite products
+    \item \textbf{Multi-language} — English, French, Arabic (RTL support)
+\end{itemize}
+
+\newpage
+
+% ============================================================
+% SECTION 14: RUNNING EVERYTHING
+% ============================================================
+\section{Running All Applications}
+
+Open \textbf{three separate terminals} and run:
+
+\begin{lstlisting}[language=bash, caption=Terminal 1 - Backend]
+cd e-commerce-back
+npm run dev
+\end{lstlisting}
+
+\begin{lstlisting}[language=bash, caption=Terminal 2 - Dashboard]
+cd e-commerce-Dash
+npm run dev
+\end{lstlisting}
+
+\begin{lstlisting}[language=bash, caption=Terminal 3 - Storefront]
+cd e-commerce-Next
+npm run dev
+\end{lstlisting}
+
+\subsection{Access Points Summary}
+
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Application} & \textbf{URL} & \textbf{Port} \\
+\hline
+Backend API & \url{http://localhost:3007} & 3007 \\
+Admin Dashboard & \url{http://localhost:8000} & 8000 \\
+Storefront & \url{http://localhost:3000} & 3000 \\
+\hline
+\end{tabular}
+\end{center}
+
+\newpage
+
+% ============================================================
+% SECTION 15: USEFUL LINKS
+% ============================================================
+\section{Useful Links}
+
+\subsection{Download Links}
+
+\begin{longtable}{p{4cm} p{8cm}}
+    \toprule
+    \textbf{Software} & \textbf{Link} \\
+    \midrule
+    Node.js & \url{https://nodejs.org/} \\
+    MongoDB Community & \url{https://www.mongodb.com/try/download/community} \\
+    MongoDB Compass & \url{https://www.mongodb.com/products/tools/compass} \\
+    MongoDB Atlas & \url{https://www.mongodb.com/atlas} \\
+    Visual Studio Code & \url{https://code.visualstudio.com/} \\
+    Git & \url{https://git-scm.com/} \\
+    Postman & \url{https://www.postman.com/} \\
+    \bottomrule
+\end{longtable}
+
+\subsection{Service Links}
+
+\begin{longtable}{p{4cm} p{8cm}}
+    \toprule
+    \textbf{Service} & \textbf{Link} \\
+    \midrule
+    Upstash (Redis) & \url{https://upstash.com/} \\
+    Upstash Console & \url{https://console.upstash.com/redis/} \\
+    Cloudinary & \url{https://cloudinary.com/} \\
+    Google Cloud Console & \url{https://console.cloud.google.com/} \\
+    Google App Passwords & \url{https://myaccount.google.com/apppasswords} \\
+    Stripe Dashboard & \url{https://dashboard.stripe.com/} \\
+    \bottomrule
+\end{longtable}
+
+\subsection{YouTube Tutorials}
+
+\begin{longtable}{p{4cm} p{8cm}}
+    \toprule
+    \textbf{Topic} & \textbf{Link} \\
+    \midrule
+    Node.js Install (Windows 11) & \url{https://www.youtube.com/watch?v=lt5D2EWZMN0} \\
+    MongoDB + Compass Install & \url{https://www.youtube.com/watch?v=jvaBaxlTqU8} \\
+    MongoDB Atlas (Free Cloud DB) & \url{https://www.youtube.com/watch?v=SFkXQZ3x6zM&t=82s} \\
+    Upstash Redis Setup & \url{https://www.youtube.com/watch?v=lK2DmL7t5R8} \\
+    Google OAuth 2.0 Setup & \url{https://www.youtube.com/watch?v=Q0a0594tOrc&t=8s} \\
+    Git Install and Setup & \url{https://www.youtube.com/watch?v=8Dd7KR9KePk} \\
+    VS Code Setup & \url{https://www.youtube.com/watch?v=UWQe6zCjQ84} \\
+    \bottomrule
+\end{longtable}
+
+\vspace{1cm}
+
+\begin{center}
+\begin{tcolorbox}[colback=infobox,colframe=primaryblue,width=0.8\textwidth]
+    \centering
+    \Large\textbf{Thank You!}\\[0.3cm]
+    \large You now have everything needed to run the project.\\
+    Good luck with your E-Commerce platform! \\[0.3cm]
+    \small \textit{For issues, check the project's README.md or create a GitHub issue.}
+\end{tcolorbox}
+\end{center}
+
+\end{document}

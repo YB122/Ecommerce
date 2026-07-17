@@ -1,0 +1,3620 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>E-Commerce Backend API Documentation</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+/* From extension million-views.reactive-md */
+/**
+ * Styles for JSX Interactive Preview in VS Code Markdown Preview
+ *
+ * CONTROL LAYER ONLY - Component content is styled by Tailwind SSR
+ *
+ * These styles control the preview container UI:
+ * - .jsx-live container with border
+ * - .jsx-live-render for component output
+ * - .jsx-live-error for error display
+ * - .rmd-card branded card for external packages (full mode)
+ * - .mv-minimal-placeholder logo-only placeholder (minimal mode)
+ * - .mv-motion-placeholder for blank-rendering motion components
+ *
+ * Component content styling is handled by Tailwind v4 which generates
+ * CSS at render time for the specific utility classes used.
+ *
+ * CONVENTIONS:
+ * - All elements use box-sizing: border-box
+ * - Sizes use rem (1rem = 16px) for scalability
+ * - 1px borders kept as px for crispness
+ */
+
+:root {
+  /* PARITY CALIBRATION CONSTANTS
+     Synchronizes horizontal gutters between Markdown Preview (SSR) and Interactive Preview (Webview).
+     The Goal: Scrollbars appear/disappear at the EXACT same sidebar width. */
+
+  /* 1. OBSERVED: The physical padding VS Code injects into the Markdown Preview body.
+     Measurement shows ~48px in centered views. Snapped to 32px (2rem) for calibration. */
+  --rmd-parity-external-body-padding: 32px;
+
+  /* 2. TARGET: The total physical gutter (Body + Container) we want on each side of the device bezel.
+     Snapped to 32px (2rem) for a tighter, high-density layout. */
+  --rmd-parity-target-total-gutter: 32px;
+
+  /* 3. DERIVED: The actual padding applied to .jsx-live.
+     Markdown Preview already has ~48px body padding, so we add 0 here. */
+  --rmd-parity-internal-fence-padding: 0px;
+
+  --rmd-preview-padding-bottom: 50px;
+}
+
+/* V1.1.0 PARITY FIX: Synchronize scrollbar behavior with Interactive Preview. */
+body {
+  scrollbar-gutter: stable;
+}
+
+/* ============================================================================
+ * Global Reset for Extension UI
+ * ============================================================================ */
+
+.jsx-live,
+.jsx-live *,
+.jsx-live *::before,
+.jsx-live *::after {
+  box-sizing: border-box;
+}
+
+/* Container for a single JSX/TSX live fence */
+.jsx-live {
+  position: relative;
+  margin: 1.5rem 0;
+  padding: 0.75rem 0;
+  /* Horizontal padding removed to give bezel maximum breathing room */
+  overflow: visible;
+}
+
+/* Header area (Parity with Interactive Preview) */
+.section-header {
+  font-size: 0.6875rem;
+  /* 11px */
+  font-weight: 500;
+  color: var(--vscode-foreground);
+  margin-bottom: 0.5rem;
+  /* 8px */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.375rem;
+}
+
+.section-title-area {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  flex: 1;
+  min-width: 0;
+  opacity: 0.7;
+}
+
+.section-badge {
+  font-size: 0.5625rem;
+  /* 9px */
+  padding: 0.0625rem 0.25rem;
+  border-radius: 0.1875rem;
+  background: var(--vscode-panel-border, #e0e0e0);
+  color: var(--vscode-foreground);
+  white-space: nowrap;
+}
+
+/* Render area - This is the scroller for the physical viewport */
+.jsx-live-render {
+  padding: 0;
+  min-height: 2.5rem;
+  /* DEFENSIVE RESET: Prevent VS Code's markdown styles from leaking into designs. */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  font-size: 16px;
+  /* Sovereign base size */
+  line-height: normal;
+  /* Neutralize VS Code's 1.6x default */
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Ensure components don't inherit "Markdown Boldness" or other VS Code defaults */
+.jsx-live-render strong,
+.jsx-live-render b {
+  font-weight: bold;
+}
+
+.jsx-live-render h1,
+.jsx-live-render h2,
+.jsx-live-render h3,
+.jsx-live-render h4,
+.jsx-live-render h5,
+.jsx-live-render h6 {
+  font-weight: bold;
+  font-size: inherit;
+  border-bottom: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Fallback for when no device emulation is used */
+.jsx-live:not([data-rmd-device-spec]) .jsx-live-render {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+}
+
+/* Dark/light theme adjustments for render area */
+body.vscode-dark .jsx-live-render {
+  background: var(--vscode-editor-background, #1e1e1e);
+  color: var(--vscode-editor-foreground, #d4d4d4);
+}
+
+body.vscode-light .jsx-live-render {
+  background: #ffffff;
+  color: #333333;
+}
+
+/* Error state (actual errors - unbranded high visibility) */
+.jsx-live-error-box .mv-error-display {
+  padding: 1rem;
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  border-radius: 6px;
+  color: #991b1b;
+  margin: 1rem 0;
+}
+
+.jsx-live-error-box .mv-error-display pre {
+  margin-top: 0.75rem;
+  padding: 0.5rem;
+  background: #fee2e2;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #b91c1c;
+}
+
+body.vscode-dark .jsx-live-error-box .mv-error-display {
+  background: #450a0a;
+  border-color: #7f1d1d;
+  color: #fca5a5;
+}
+
+body.vscode-dark .jsx-live-error-box .mv-error-display pre {
+  background: #7f1d1d;
+  color: #fecaca;
+}
+
+/* Error state (within branded card) */
+.jsx-live-has-error .jsx-live-error {
+  padding: 0.75rem 1rem;
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+.mv-alert-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mv-alert-header svg {
+  flex-shrink: 0;
+}
+
+.jsx-live-has-error .jsx-live-error strong {
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.jsx-live-has-error .jsx-live-error pre {
+  margin: 0;
+  padding: 0.5rem;
+  background: #fee2e2;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+body.vscode-dark .jsx-live-has-error .jsx-live-error {
+  background: #450a0a;
+  color: #fca5a5;
+}
+
+body.vscode-dark .jsx-live-has-error .jsx-live-error pre {
+  background: #7f1d1d;
+}
+
+/* ============================================================================
+ * Code-Only Mode with Slim Footer
+ * Used when previewOverlay is "none" and component can't render
+ * Shows original code with a subtle 2rem amber footer
+ * ============================================================================ */
+
+.jsx-live-code-only {
+  display: flex;
+  flex-direction: column;
+}
+
+.jsx-live-code-only .jsx-live-code {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  background: var(--vscode-textCodeBlock-background, #f5f5f5);
+  font-family: var(--vscode-editor-font-family, 'Consolas', 'Monaco', monospace);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  overflow-x: auto;
+  border-bottom: none;
+  border-radius: 0;
+}
+
+.jsx-live-code-only .jsx-live-code code {
+  background: transparent;
+  padding: 0;
+}
+
+body.vscode-dark .jsx-live-code-only .jsx-live-code {
+  background: var(--vscode-textCodeBlock-background, #2d2d2d);
+}
+
+/* Slim footer - subtle amber background */
+.mv-slim-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.375rem 0.75rem;
+  background: oklch(0.96 0.04 85);
+  /* Very light amber */
+  border-top: 1px solid oklch(0.88 0.06 85);
+  font-size: 0.6875rem;
+  color: oklch(0.45 0.08 60);
+  gap: 0.75rem;
+}
+
+body.vscode-dark .mv-slim-footer {
+  background: oklch(0.25 0.03 60);
+  /* Dark amber tint */
+  border-top-color: oklch(0.35 0.04 60);
+  color: oklch(0.75 0.06 60);
+}
+
+.mv-slim-footer-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  /* Allow shrinking */
+  overflow: hidden;
+}
+
+.mv-slim-footer-logo {
+  flex-shrink: 0;
+  display: block;
+  width: 1rem;
+  height: 1rem;
+  background-image: url('../images/logo.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.6;
+  transition: opacity 0.15s ease;
+}
+
+.mv-slim-footer-logo:hover {
+  opacity: 1;
+}
+
+.mv-slim-footer-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  ;
+}
+
+.mv-slim-footer-cta {
+  flex-shrink: 0;
+  /* Never shrink the CTA */
+  white-space: nowrap;
+}
+
+.mv-slim-footer-cta kbd {
+  display: inline-block;
+  padding: 0.0625rem 0.3125rem;
+  margin-right: 0.25rem;
+  background: var(--vscode-keybindingLabel-background, rgba(0, 0, 0, 0.06));
+  border: 1px solid var(--vscode-keybindingLabel-border, rgba(0, 0, 0, 0.1));
+  border-radius: 0.1875rem;
+  font-size: 0.625rem;
+  font-family: var(--vscode-editor-font-family);
+  color: var(--vscode-keybindingLabel-foreground, inherit);
+}
+
+body.vscode-dark .mv-slim-footer-cta kbd {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* ============================================================================
+ * Minimal Placeholder (logo + text mode)
+ * Used when previewOverlay is set to "minimal"
+ * Centered logo with contextual help text
+ * ============================================================================ */
+
+.mv-minimal-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 6.25rem;
+  padding: 1.25rem 1rem;
+  background: oklch(0.9677 0.0095 140.52 / 0.15);
+  border-radius: 0.25rem;
+  text-align: center;
+}
+
+body.vscode-dark .mv-minimal-placeholder {
+  background: oklch(0.25 0.02 140 / 0.15);
+}
+
+.mv-minimal-logo {
+  display: block;
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+}
+
+.mv-minimal-logo:hover {
+  opacity: 0.8;
+}
+
+.mv-minimal-logo .mv-brand-logo {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+.mv-minimal-text {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--vscode-foreground);
+  opacity: 0.7;
+}
+
+.mv-minimal-hint {
+  margin: 0;
+  font-size: 0.6875rem;
+  color: var(--vscode-descriptionForeground);
+  opacity: 0.8;
+}
+
+.mv-minimal-hint kbd {
+  display: inline-block;
+  padding: 0.0625rem 0.3125rem;
+  background: var(--vscode-keybindingLabel-background, var(--vscode-button-secondaryBackground));
+  border: 1px solid var(--vscode-keybindingLabel-border, var(--vscode-widget-border));
+  border-radius: 0.1875rem;
+  font-size: 0.625rem;
+  font-family: var(--vscode-editor-font-family);
+  color: var(--vscode-keybindingLabel-foreground, var(--vscode-foreground));
+}
+
+/* ============================================================================
+ * Million Views Branded Card (for unsupported packages)
+ * Strategy: VS Code theme variables for structure, brand green for accents
+ * Brand: #22c55e (green-500), #16a34a (green-600), #dcfce7 (green-100)
+ * ============================================================================ */
+
+.rmd-card {
+  --rmd-brand: #22c55e;
+  --rmd-brand-hover: #16a34a;
+  --rmd-brand-subtle: #dcfce7;
+  --rmd-brand-text: #166534;
+
+  background: var(--vscode-editor-background);
+  border: 1px solid var(--vscode-panel-border, var(--vscode-widget-border));
+  border-left: 3px solid var(--rmd-brand);
+  border-radius: 0.375rem;
+  overflow: hidden;
+  font-family: var(--vscode-font-family);
+}
+
+.rmd-card-header {
+  padding: 0.625rem 0.875rem;
+  border-bottom: 1px solid var(--vscode-panel-border, var(--vscode-widget-border));
+  background: var(--vscode-sideBar-background, var(--vscode-editor-background));
+}
+
+.mv-brand-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: var(--vscode-foreground);
+  transition: color 0.15s;
+}
+
+.mv-brand-logo {
+  width: 1.5rem;
+  height: 1.5rem;
+  background-image: url('../images/logo.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.mv-brand-link:hover {
+  color: var(--rmd-brand);
+}
+
+.mv-brand-name {
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.rmd-card-body {
+  padding: 0.875rem 1rem;
+}
+
+.rmd-card-title {
+  margin: 0 0 0.375rem 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--vscode-foreground);
+}
+
+.rmd-card-text {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.75rem;
+  color: var(--vscode-descriptionForeground);
+  line-height: 1.5;
+}
+
+.rmd-card-text strong {
+  color: var(--vscode-foreground);
+}
+
+.rmd-card-muted {
+  font-size: 0.6875rem;
+  opacity: 0.8;
+  margin-top: 0.625rem;
+}
+
+.rmd-card-cta {
+  margin-top: 0.875rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--vscode-panel-border, var(--vscode-widget-border));
+}
+
+.rmd-card-cta .rmd-card-text {
+  margin-bottom: 0.25rem;
+}
+
+.rmd-card-steps {
+  margin: 0.5rem 0 0.75rem 0;
+  padding-left: 1.25rem;
+  list-style: decimal;
+}
+
+.rmd-card-steps li {
+  font-size: 0.75rem;
+  color: var(--vscode-foreground);
+  line-height: 1.6;
+  margin-bottom: 0.25rem;
+}
+
+.rmd-card-note {
+  font-size: 0.6875rem;
+  font-style: italic;
+  opacity: 0.85;
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}
+
+.rmd-card-note a {
+  color: var(--rmd-brand);
+}
+
+.rmd-card-text kbd {
+  display: inline-block;
+  padding: 0.125rem 0.375rem;
+  background: var(--vscode-keybindingLabel-background, var(--vscode-button-secondaryBackground));
+  border: 1px solid var(--vscode-keybindingLabel-border, var(--vscode-widget-border));
+  border-radius: 0.1875rem;
+  font-size: 0.6875rem;
+  font-family: var(--vscode-editor-font-family);
+  color: var(--vscode-keybindingLabel-foreground, var(--vscode-foreground));
+  box-shadow: 0 1px 0 var(--vscode-widget-shadow, rgba(0, 0, 0, 0.1));
+}
+
+.mv-packages-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin-bottom: 0.5rem;
+  justify-content: flex-start;
+}
+
+.mv-package-name {
+  display: inline-block;
+  padding: 0.1875rem 0.5rem;
+  background: var(--rmd-brand-subtle);
+  color: var(--rmd-brand-text);
+  border-radius: 0.25rem;
+  font-size: 0.6875rem;
+  font-family: var(--vscode-editor-font-family);
+  font-weight: 500;
+}
+
+.mv-package-bundled {
+  display: inline-block;
+  padding: 0.125rem 0.375rem;
+  background: var(--vscode-badge-background);
+  color: var(--vscode-badge-foreground);
+  border-radius: 0.1875rem;
+  font-size: 0.625rem;
+  font-family: var(--vscode-editor-font-family);
+  opacity: 0.85;
+}
+
+.rmd-card-actions {
+  padding: 0.625rem 1rem;
+  background: var(--vscode-sideBar-background, var(--vscode-editor-background));
+  border-top: 1px solid var(--vscode-panel-border, var(--vscode-widget-border));
+}
+
+.mv-action-link {
+  font-size: 0.6875rem;
+  color: var(--rmd-brand);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.mv-action-link:hover {
+  color: var(--rmd-brand-hover);
+  text-decoration: underline;
+}
+
+/* Dark mode: adjust brand colors for better contrast */
+body.vscode-dark .rmd-card {
+  --rmd-brand-subtle: #14532d;
+  --rmd-brand-text: #bbf7d0;
+}
+
+/* ============================================================================
+ * Blank Animation Placeholder (BAP) (for blank-rendering motion components)
+ * Displayed when motion code uses initial={{ opacity: 0 }} or similar
+ * ============================================================================ */
+
+.mv-motion-placeholder {
+  position: relative;
+  min-height: 7.5rem;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: oklch(0.9677 0.0095 140.52 / 0.25);
+  border-radius: 0.25rem;
+}
+
+body.vscode-dark .mv-motion-placeholder {
+  background: oklch(0.25 0.02 140 / 0.25);
+}
+
+.mv-motion-placeholder-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 17.5rem;
+}
+
+.mv-motion-placeholder-logo {
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 0.75rem;
+  background-image: url('../images/logo.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.3;
+}
+
+.mv-motion-placeholder-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--vscode-foreground);
+  opacity: 0.7;
+}
+
+.mv-motion-placeholder-text {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.75rem;
+  color: var(--vscode-descriptionForeground);
+  line-height: 1.5;
+  opacity: 0.7;
+}
+
+.mv-motion-placeholder-text code {
+  padding: 0.0625rem 0.25rem;
+  background: var(--vscode-textCodeBlock-background, rgba(0, 0, 0, 0.1));
+  border-radius: 0.1875rem;
+  font-family: var(--vscode-editor-font-family);
+  font-size: 0.6875rem;
+}
+
+.mv-motion-placeholder-cta {
+  margin: 0.5rem 0 0 0;
+  font-size: 0.75rem;
+  color: var(--vscode-foreground);
+  opacity: 0.7;
+}
+
+.mv-motion-placeholder-cta kbd {
+  display: inline-block;
+  padding: 0.125rem 0.375rem;
+  background: var(--vscode-keybindingLabel-background, var(--vscode-button-secondaryBackground));
+  border: 1px solid var(--vscode-keybindingLabel-border, var(--vscode-widget-border));
+  border-radius: 0.1875rem;
+  font-size: 0.6875rem;
+  font-family: var(--vscode-editor-font-family);
+  color: var(--vscode-keybindingLabel-foreground, var(--vscode-foreground));
+  box-shadow: 0 1px 0 var(--vscode-widget-shadow, rgba(0, 0, 0, 0.1));
+}
+
+/* ============================================================================
+ * EIP (Error Intercept Placeholder) Styles
+ * Used by both Markdown and Interactive Preview for consistent EIP cards
+ * ============================================================================ */
+
+/* ============================================================================
+ * Code-Only Mode with Slim Footer
+ * Used when previewOverlay is "none" and component can't render
+ * ============================================================================ */
+
+.jsx-live-code-only {
+  display: flex;
+  flex-direction: column;
+}
+
+.jsx-live-code-only .jsx-live-code {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  background: var(--vscode-textCodeBlock-background, #f5f5f5);
+  font-family: var(--vscode-editor-font-family, 'Consolas', 'Monaco', monospace);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  overflow-x: auto;
+  border-bottom: none;
+  border-radius: 0;
+}
+
+.jsx-live-code-only .jsx-live-code code {
+  background: transparent;
+  padding: 0;
+}
+
+body.vscode-dark .jsx-live-code-only .jsx-live-code {
+  background: var(--vscode-textCodeBlock-background, #2d2d2d);
+}
+
+/* Slim footer - subtle amber background */
+.mv-slim-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.375rem 0.75rem;
+  background: oklch(0.96 0.04 85);
+  /* Very light amber */
+  border-top: 1px solid oklch(0.88 0.06 85);
+  font-size: 0.6875rem;
+  color: oklch(0.45 0.08 60);
+  gap: 0.75rem;
+}
+
+body.vscode-dark .mv-slim-footer {
+  background: oklch(0.25 0.03 60);
+  /* Dark amber tint */
+  border-top-color: oklch(0.35 0.04 60);
+  color: oklch(0.75 0.06 60);
+}
+
+.mv-slim-footer-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  /* Allow shrinking */
+  overflow: hidden;
+}
+
+.mv-slim-footer-logo {
+  flex-shrink: 0;
+  display: block;
+  width: 1rem;
+  height: 1rem;
+  background-image: url('../images/logo.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.6;
+  transition: opacity 0.15s ease;
+}
+
+.mv-slim-footer-logo:hover {
+  opacity: 1;
+}
+
+.mv-slim-footer-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mv-slim-footer-cta {
+  flex-shrink: 0;
+  /* Never shrink the CTA */
+  white-space: nowrap;
+}
+
+.mv-slim-footer-cta kbd {
+  display: inline-block;
+  padding: 0.0625rem 0.3125rem;
+  margin-right: 0.25rem;
+  background: var(--vscode-keybindingLabel-background, rgba(0, 0, 0, 0.06));
+  border: 1px solid var(--vscode-keybindingLabel-border, rgba(0, 0, 0, 0.1));
+  border-radius: 0.1875rem;
+  font-size: 0.625rem;
+  font-family: var(--vscode-editor-font-family);
+  color: var(--vscode-keybindingLabel-foreground, inherit);
+}
+
+body.vscode-dark .mv-slim-footer-cta kbd {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* ============================================================================
+ * Minimal Placeholder (logo + text mode)
+ * Used when previewOverlay is set to "minimal"
+ * ============================================================================ */
+
+.jsx-live-unsupported {
+  padding: 1rem;
+}
+
+.mv-minimal-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 6.25rem;
+  padding: 1.25rem 1rem;
+  background: oklch(0.9677 0.0095 140.52 / 0.15);
+  border-radius: 0.25rem;
+  text-align: center;
+}
+
+body.vscode-dark .mv-minimal-placeholder {
+  background: oklch(0.25 0.02 140 / 0.15);
+}
+
+.mv-minimal-logo {
+  display: block;
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+}
+
+.mv-minimal-logo:hover {
+  opacity: 0.8;
+}
+
+.mv-minimal-logo .mv-brand-logo {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+.mv-brand-logo {
+  width: 1.5rem;
+  height: 1.5rem;
+  background-image: url('../images/logo.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.mv-minimal-text {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--vscode-foreground);
+  opacity: 0.7;
+}
+
+.mv-minimal-hint {
+  margin: 0;
+  font-size: 0.6875rem;
+  color: var(--vscode-descriptionForeground);
+  opacity: 0.8;
+}
+
+.mv-minimal-hint kbd {
+  display: inline-block;
+  padding: 0.0625rem 0.3125rem;
+  background: var(--vscode-keybindingLabel-background, var(--vscode-button-secondaryBackground));
+  border: 1px solid var(--vscode-keybindingLabel-border, var(--vscode-widget-border));
+  border-radius: 0.1875rem;
+  font-size: 0.625rem;
+  font-family: var(--vscode-editor-font-family);
+  color: var(--vscode-keybindingLabel-foreground, var(--vscode-foreground));
+}
+
+.mv-packages-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  justify-content: flex-start;
+}
+
+.mv-package-name {
+  font-family: var(--vscode-editor-font-family, monospace);
+  font-size: 0.6875rem;
+  background: var(--rmd-brand-subtle);
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.1875rem;
+  color: var(--rmd-brand-text);
+}
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="e-commerce-backend-api-documentation">E-Commerce Backend API Documentation</h1>
+<blockquote>
+<p><strong>Base URL:</strong> <code>http://localhost:3007/v1</code>
+<strong>Currency (configurable):</strong> EGP (Egyptian Pound)
+<strong>Auth Format:</strong> <code>Authorization: &lt;role&gt; &lt;token&gt;</code> (e.g. <code>Authorization: user eyJhbGciOiJIUzI1NiIs...</code>)</p>
+</blockquote>
+<hr>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+<li><a href="#1-authentication-auth">Authentication</a></li>
+<li><a href="#2-user-profile-user">User Profile</a></li>
+<li><a href="#3-phone-verification-phone">Phone Verification (WhatsApp OTP)</a></li>
+<li><a href="#4-categories-category">Categories</a></li>
+<li><a href="#5-subcategories-subcategory">Subcategories</a></li>
+<li><a href="#6-products-products">Products</a></li>
+<li><a href="#7-cart-cart">Cart</a></li>
+<li><a href="#8-wishlist-wishlist">Wishlist</a></li>
+<li><a href="#9-orders--payment-order">Orders &amp; Payments</a></li>
+<li><a href="#10-security-logs-admin">Security Logs</a></li>
+<li><a href="#11-error-handling--auth-system">Error Handling &amp; Auth System</a></li>
+<li><a href="#12-database-models">Database Models</a></li>
+</ol>
+<hr>
+<h2 id="1-authentication-v1auth">1. Authentication (<code>/v1/auth</code>)</h2>
+<h3 id="11-post-v1authsignup--register-a-new-user">1.1 POST <code>/v1/auth/signup</code> — Register a new user</h3>
+<p><strong>Auth:</strong> None<br>
+<strong>Rate Limit:</strong> None</p>
+<p><strong>Request Body (JSON):</strong></p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;email&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;john@example.com&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;password&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;123456&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;confirmPassword&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;123456&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;role&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;user&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;phone&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;+201234567890&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>email</code></td>
+<td>string</td>
+<td><strong>Yes</strong></td>
+<td>Unique email address. Name is auto-derived from the part before <code>@</code>.</td>
+</tr>
+<tr>
+<td><code>password</code></td>
+<td>string</td>
+<td><strong>Yes</strong></td>
+<td>Min 6, max 20 characters</td>
+</tr>
+<tr>
+<td><code>confirmPassword</code></td>
+<td>string</td>
+<td><strong>Yes</strong></td>
+<td>Must match <code>password</code></td>
+</tr>
+<tr>
+<td><code>role</code></td>
+<td>string</td>
+<td>No</td>
+<td>One of: <code>user</code>, <code>admin</code>, <code>superAdmin</code> (default: <code>user</code>)</td>
+</tr>
+<tr>
+<td><code>phone</code></td>
+<td>string</td>
+<td>No</td>
+<td>International format (e.g. <code>+2126xxxxxxxx</code>)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Success Response</strong> <code>201 Created</code>:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Signup successful — verification email sent&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<blockquote>
+<p>The user is created with <code>isActive: false</code>. A verification email is sent. The user <strong>cannot login</strong> until email is verified.</p>
+</blockquote>
+<p><strong>Error Responses:</strong></p>
+<ul>
+<li><code>400</code> — <code>{ &quot;message&quot;: &quot;Email already exists&quot; }</code></li>
+<li><code>400</code> — <code>{ &quot;message&quot;: &quot;Passwords do not match&quot; }</code></li>
+<li><code>400</code> — <code>{ &quot;message&quot;: &quot;validation error&quot;, &quot;error&quot;: [...] }</code> (Joi validation details)</li>
+</ul>
+<hr>
+<h3 id="12-post-v1authlogin--login-with-emailpassword">1.2 POST <code>/v1/auth/login</code> — Login with email/password</h3>
+<p><strong>Auth:</strong> None<br>
+<strong>Rate Limit:</strong> None</p>
+<p><strong>Request Body (JSON):</strong></p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;email&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;john@example.com&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;password&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;123456&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<p><strong>Success Response</strong> <code>200 OK</code>:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Login successful&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;accessToken&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;eyJhbGciOiJIUzI1NiIs...&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;refreshToken&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;eyJhbGciOiJIUzI1NiIs...&quot;</span>
+  <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<ul>
+<li><code>accessToken</code> expires in <strong>30 minutes</strong> (configurable via <code>ACCESS_TOKEN</code>)</li>
+<li><code>refreshToken</code> expires in <strong>1 year</strong> (configurable via <code>REFRESH_TOKEN</code>)</li>
+<li>Tokens are signed with <strong>role-specific secrets</strong> (<code>SIGNATURE_USER</code>, <code>SIGNATURE_ADMIN</code>, <code>SIGNATURE_SUPER_ADMIN</code>)</li>
+</ul>
+<p><strong>How to use tokens in subsequent requests:</strong></p>
+<pre><code>Authorization: user eyJhbGciOiJIUzI1NiIs...
+</code></pre>
+<p>Replace <code>user</code> with the actual role (<code>admin</code>, <code>user</code>, <code>superAdmin</code>).</p>
+<p><strong>Error Responses:</strong></p>
+<ul>
+<li><code>400</code> — <code>{ &quot;message&quot;: &quot;Invalid email or password&quot; }</code></li>
+<li><code>400</code> — <code>{ &quot;message&quot;: &quot;This account uses Google login&quot; }</code> (if user was created via Google OAuth and has no password)</li>
+<li><code>401</code> — <code>{ &quot;message&quot;: &quot;Please verify your email first&quot; }</code> (if <code>isActive</code> is false)</li>
+</ul>
+<hr>
+<h3 id="13-get-v1authgooglesignup--google-oauth-signup">1.3 GET <code>/v1/auth/google/signup</code> — Google OAuth Signup</h3>
+<p><strong>Auth:</strong> None<br>
+<strong>Rate Limit:</strong> None</p>
+<p><strong>Query Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>role</code></td>
+<td>string</td>
+<td><code>user</code></td>
+<td>Role to assign to new user: <code>user</code>, <code>admin</code>, <code>superAdmin</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Behavior:</strong> Redirects the browser to Google's OAuth consent screen. After user grants permission, Google redirects to the callback URL.</p>
+<p><strong>Callback:</strong> <code>GET /v1/auth/google/signup/callback</code></p>
+<p><strong>Success Response</strong> <code>200 OK</code> (from callback):</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Google signup successful&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;accessToken&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;eyJhbGciOiJIUzI1NiIs...&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;refreshToken&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;eyJhbGciOiJIUzI1NiIs...&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;user&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;role&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;user&quot;</span> <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<p><strong>Error Responses (callback):</strong></p>
+<ul>
+<li><code>400</code> — <code>{ &quot;message&quot;: &quot;An account with this email already exists. Please login instead.&quot; }</code></li>
+<li><code>400</code> — <code>{ &quot;message&quot;: &quot;No email found from Google account&quot; }</code></li>
+<li><code>400</code> — <code>{ &quot;message&quot;: &quot;Role must be one of: admin, user, superAdmin&quot; }</code> (if invalid role in query)</li>
+</ul>
+<hr>
+<h3 id="14-get-v1authgooglelogin--google-oauth-login">1.4 GET <code>/v1/auth/google/login</code> — Google OAuth Login</h3>
+<p><strong>Auth:</strong> None<br>
+<strong>Behavior:</strong> Redirects to Google's OAuth consent screen for existing users.</p>
+<p><strong>Callback:</strong> <code>GET /v1/auth/google/login/callback</code></p>
+<p><strong>Success Response</strong> <code>200 OK</code> (from callback):</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Google login successful&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;accessToken&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;eyJhbGciOiJIUzI1NiIs...&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;refreshToken&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;eyJhbGciOiJIUzI1NiIs...&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;user&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;role&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;user&quot;</span> <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<p><strong>Error Responses (callback):</strong></p>
+<ul>
+<li><code>400</code> — <code>{ &quot;message&quot;: &quot;No account found with this email. Please signup first.&quot; }</code></li>
+<li><code>400</code> — <code>{ &quot;message&quot;: &quot;Please verify your email first.&quot; }</code> (if user registered via email but hasn't verified yet)</li>
+</ul>
+<hr>
+<h3 id="15-get-v1authverify-emailtoken--verify-email">1.5 GET <code>/v1/auth/verify-email/:token</code> — Verify Email</h3>
+<p><strong>Auth:</strong> None<br>
+<strong>Rate Limit:</strong> None</p>
+<p><strong>Path Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>token</code></td>
+<td>string</td>
+<td>JWT token from verification email link</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Success Response</strong> <code>200 OK</code>:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Email verified successfully&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<p>Or if already verified:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Email already verified&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<p><strong>Error Responses:</strong></p>
+<ul>
+<li><code>400</code> — <code>{ &quot;message&quot;: &quot;Invalid or expired token&quot; }</code></li>
+</ul>
+<hr>
+<h3 id="16-post-v1authresend-verify-email--resend-verification-email">1.6 POST <code>/v1/auth/resend-verify-email</code> — Resend Verification Email</h3>
+<p><strong>Auth:</strong> None<br>
+<strong>Rate Limit:</strong> 1 request per 60 seconds</p>
+<p><strong>Request Body (JSON):</strong></p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;email&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;john@example.com&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<p><strong>Success Response</strong> <code>200 OK</code>:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Verification email resent&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<p><strong>Error Responses:</strong></p>
+<ul>
+<li><code>400</code> — <code>{ &quot;message&quot;: &quot;User not found&quot; }</code></li>
+<li><code>200</code> — <code>{ &quot;message&quot;: &quot;Email already verified&quot; }</code> (if already active)</li>
+</ul>
+<hr>
+<h3 id="17-post-v1authforgot-password--forgot-password">1.7 POST <code>/v1/auth/forgot-password</code> — Forgot Password</h3>
+<p><strong>Auth:</strong> None<br>
+<strong>Rate Limit:</strong> 1 request per 60 seconds</p>
+<p><strong>Request Body (JSON):</strong></p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;email&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;john@example.com&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<p><strong>Success Response</strong> <code>200 OK</code> (always returns this message regardless of whether email exists — security best practice):</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;If the email exists, a reset link has been sent&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<p><strong>How it works:</strong></p>
+<ol>
+<li>Generates a JWT token (expires 15 minutes)</li>
+<li>Stores token in Redis with key <code>reset:&lt;token&gt;</code> (expires 900 seconds)</li>
+<li>Sends email with reset link: <code>{BASE_URL}/v1/auth/reset-password/{token}</code></li>
+</ol>
+<hr>
+<h3 id="18-post-v1authreset-passwordtoken--reset-password">1.8 POST <code>/v1/auth/reset-password/:token</code> — Reset Password</h3>
+<p><strong>Auth:</strong> None<br>
+<strong>Rate Limit:</strong> 1 request per 60 seconds</p>
+<p><strong>Path Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>token</code></td>
+<td>string</td>
+<td>JWT token from reset password email link</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Request Body (JSON):</strong></p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;password&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;newpassword123&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;confirmPassword&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;newpassword123&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<p><strong>Success Response</strong> <code>200 OK</code>:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Password reset successful&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<p><strong>Error Responses:</strong></p>
+<ul>
+<li><code>400</code> — <code>{ &quot;message&quot;: &quot;Passwords do not match&quot; }</code></li>
+<li><code>400</code> — <code>{ &quot;message&quot;: &quot;Invalid or expired token&quot; }</code></li>
+<li><code>400</code> — <code>{ &quot;message&quot;: &quot;User not found&quot; }</code></li>
+</ul>
+<hr>
+<h3 id="19-post-v1authaccess-token--refresh-access-token">1.9 POST <code>/v1/auth/access-token</code> — Refresh Access Token</h3>
+<p><strong>Auth:</strong> Valid refresh token in Authorization header<br>
+<strong>Rate Limit:</strong> None</p>
+<p><strong>Headers (any format works):</strong></p>
+<pre><code>Authorization: user|admin|superAdmin &lt;refreshToken&gt;
+Authorization: Bearer &lt;refreshToken&gt;
+Authorization: &lt;refreshToken&gt;
+</code></pre>
+<p><strong>Success Response</strong> <code>200 OK</code>:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Access token refreshed successfully&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;accessToken&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;eyJ...&quot;</span>
+  <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<p><strong>Error Responses:</strong></p>
+<ul>
+<li><code>401</code> — <code>{ &quot;message&quot;: &quot;Login required&quot; }</code></li>
+<li><code>401</code> — <code>{ &quot;message&quot;: &quot;Invalid token format&quot; }</code></li>
+<li><code>401</code> — <code>{ &quot;message&quot;: &quot;Invalid or expired refresh token&quot; }</code></li>
+<li><code>401</code> — <code>{ &quot;message&quot;: &quot;User not found&quot; }</code></li>
+<li><code>500</code> — <code>{ &quot;message&quot;: &quot;Token generation failed&quot; }</code></li>
+</ul>
+<hr>
+<h2 id="2-user-profile-v1user">2. User Profile (<code>/v1/user</code>)</h2>
+<h3 id="21-get-v1userprofile--get-my-profile">2.1 GET <code>/v1/user/profile</code> — Get My Profile</h3>
+<p><strong>Auth:</strong> Required (any authenticated user)<br>
+<strong>Rate Limit:</strong> None</p>
+<p><strong>Headers:</strong></p>
+<pre><code>Authorization: user eyJhbGciOiJIUzI1NiIs...
+</code></pre>
+<p><strong>Success Response</strong> <code>200 OK</code>:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Profile&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;john_doe&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;email&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;john@example.com&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;isActive&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;imageURL&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://res.cloudinary.com/.../profiles/abc123.jpg&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;role&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;user&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;phone&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;+201234567890&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;googleId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">null</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;isBlocked&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2026-06-14T10:00:00.000Z&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2026-06-14T10:00:00.000Z&quot;</span>
+  <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<blockquote>
+<p>Note: <code>password</code> field is excluded from response.</p>
+</blockquote>
+<p><strong>Error Responses:</strong></p>
+<ul>
+<li><code>401</code> — <code>{ &quot;message&quot;: &quot;Login required&quot; }</code></li>
+<li><code>404</code> — <code>{ &quot;message&quot;: &quot;User not found&quot; }</code></li>
+</ul>
+<hr>
+<h3 id="22-put-v1userprofile--update-profile">2.2 PUT <code>/v1/user/profile</code> — Update Profile</h3>
+<p><strong>Auth:</strong> Required (any authenticated user)<br>
+<strong>Rate Limit:</strong> None<br>
+<strong>Content-Type:</strong> <code>multipart/form-data</code></p>
+<p><strong>Request Fields:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>phone</code></td>
+<td>string</td>
+<td>No</td>
+<td>International format (e.g. <code>+2126xxxxxxxx</code>)</td>
+</tr>
+<tr>
+<td><code>image</code></td>
+<td>file</td>
+<td>No</td>
+<td>Profile picture (JPEG, PNG, GIF, WebP — max 2MB)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Success Response</strong> <code>200 OK</code>:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Profile updated&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;john_doe&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;email&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;john@example.com&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;imageURL&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://res.cloudinary.com/.../profiles/new123.jpg&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;phone&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;+201234567890&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;role&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;user&quot;</span><span class="hljs-punctuation">,</span>
+    ...
+  <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<p><strong>How it works:</strong></p>
+<ul>
+<li>If a new image is uploaded, the old image is <strong>deleted from Cloudinary</strong> before uploading the new one.</li>
+<li>Image validation is done via <code>file-type</code> package (checks actual file bytes, not just extension).</li>
+</ul>
+<p><strong>Error Responses:</strong></p>
+<ul>
+<li><code>400</code> — <code>{ &quot;message&quot;: &quot;No fields to update&quot; }</code></li>
+<li><code>400</code> — <code>{ &quot;message&quot;: &quot;Invalid file type: ... Only JPEG, PNG, GIF, and WebP are allowed.&quot; }</code></li>
+</ul>
+<hr>
+<h3 id="23-post-v1userupload-avatar--upload-avatar">2.3 POST <code>/v1/user/upload-avatar</code> — Upload Avatar</h3>
+<p><strong>Auth:</strong> Required (any authenticated user)<br>
+<strong>Rate Limit:</strong> None<br>
+<strong>Content-Type:</strong> <code>multipart/form-data</code></p>
+<p><strong>Request Fields:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>image</code></td>
+<td>file</td>
+<td><strong>Yes</strong></td>
+<td>Avatar image (JPEG, PNG, GIF, WebP — max 2MB)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Success Response</strong> <code>200 OK</code>:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Avatar uploaded&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;imageURL&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://res.cloudinary.com/.../profiles/abc123.jpg&quot;</span>
+  <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<p><strong>Error Responses:</strong></p>
+<ul>
+<li><code>400</code> — <code>{ &quot;message&quot;: &quot;No image provided&quot; }</code></li>
+</ul>
+<hr>
+<h2 id="3-phone-verification-v1phone">3. Phone Verification (<code>/v1/phone</code>)</h2>
+<h3 id="31-post-v1phonesend-otp--send-otp-via-whatsapp">3.1 POST <code>/v1/phone/send-otp</code> — Send OTP via WhatsApp</h3>
+<p><strong>Auth:</strong> Required (user role)<br>
+<strong>Rate Limit:</strong> None</p>
+<p><strong>Request Body (JSON):</strong></p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;phone&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;+212612345678&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>phone</code></td>
+<td>string</td>
+<td><strong>Yes</strong></td>
+<td>International format (e.g. <code>+2126xxxxxxxx</code>)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>How it works:</strong></p>
+<ol>
+<li>Generates a 6-digit numeric OTP (e.g. <code>482931</code>)</li>
+<li>Stores OTP in <strong>Redis</strong> with key <code>otp:+212612345678</code>, expires in <strong>5 minutes</strong> (300 seconds)</li>
+<li>Sends OTP via <strong>Infobip WhatsApp API</strong> to the provided phone number</li>
+</ol>
+<p><strong>Success Response</strong> <code>200 OK</code>:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;OTP sent to your WhatsApp&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<hr>
+<h3 id="32-post-v1phoneverify-otp--verify-otp">3.2 POST <code>/v1/phone/verify-otp</code> — Verify OTP</h3>
+<p><strong>Auth:</strong> Required (user role)<br>
+<strong>Rate Limit:</strong> None</p>
+<p><strong>Request Body (JSON):</strong></p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;phone&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;+212612345678&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;otp&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;482931&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>phone</code></td>
+<td>string</td>
+<td><strong>Yes</strong></td>
+<td>Same phone used in send-otp</td>
+</tr>
+<tr>
+<td><code>otp</code></td>
+<td>string</td>
+<td><strong>Yes</strong></td>
+<td>6-digit code received via WhatsApp</td>
+</tr>
+</tbody>
+</table>
+<p><strong>How it works:</strong></p>
+<ol>
+<li>Looks up OTP from Redis by key <code>otp:{phone}</code></li>
+<li>If not found → expired. If mismatch → invalid.</li>
+<li>On success: deletes OTP from Redis, saves <code>phone</code> to the authenticated user's profile.</li>
+</ol>
+<p><strong>Success Response</strong> <code>200 OK</code>:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Phone number verified and saved successfully&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<p><strong>Error Responses:</strong></p>
+<ul>
+<li><code>400</code> — <code>{ &quot;message&quot;: &quot;OTP expired or not found. Request a new one.&quot; }</code></li>
+<li><code>400</code> — <code>{ &quot;message&quot;: &quot;Invalid OTP&quot; }</code></li>
+<li><code>401</code> — <code>{ &quot;message&quot;: &quot;Authentication required&quot; }</code></li>
+</ul>
+<hr>
+<h2 id="4-categories-v1category">4. Categories (<code>/v1/category</code>)</h2>
+<h3 id="41-get-v1category--list-active-categories-public">4.1 GET <code>/v1/category</code> — List Active Categories (Public)</h3>
+<p><strong>Auth:</strong> None<br>
+<strong>Rate Limit:</strong> None</p>
+<p><strong>Success Response</strong> <code>200 OK</code>:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Categories&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+    <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;en_name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Electronics&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;ar_name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;إلكترونيات&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;fr_name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Électronique&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;imageURL&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://res.cloudinary.com/.../categories/abc.jpg&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;addedByEmail&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;admin@example.com&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;isActive&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2026-06-14T10:00:00.000Z&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2026-06-14T10:00:00.000Z&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;subcategories&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+        <span class="hljs-punctuation">{</span>
+          <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">&quot;en_name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Mobile Phones&quot;</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">&quot;isActive&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">&quot;products&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+            <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;en_name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;iPhone 15&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;isActive&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span> <span class="hljs-punctuation">}</span>
+          <span class="hljs-punctuation">]</span>
+        <span class="hljs-punctuation">}</span>
+      <span class="hljs-punctuation">]</span>
+    <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<blockquote>
+<p>Only returns categories where <code>isActive: true</code>. Subcategories and products are also filtered to active ones.</p>
+</blockquote>
+<hr>
+<h3 id="42-get-v1categoryidsubcategories--get-subcategories-by-category-public">4.2 GET <code>/v1/category/:id/subcategories</code> — Get Subcategories by Category (Public)</h3>
+<p><strong>Auth:</strong> None</p>
+<p><strong>Success Response</strong> <code>200 OK</code>:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Subcategories&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+    <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;en_name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Mobile Phones&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;categoryId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;isActive&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;products&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>...<span class="hljs-punctuation">]</span>
+    <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<p><strong>Error Responses:</strong></p>
+<ul>
+<li><code>404</code> — <code>{ &quot;message&quot;: &quot;Category not found&quot; }</code></li>
+</ul>
+<hr>
+<h3 id="43-post-v1categoryadmin--create-category-admin">4.3 POST <code>/v1/category/admin</code> — Create Category (Admin)</h3>
+<p><strong>Auth:</strong> Required (admin or superAdmin)<br>
+<strong>Content-Type:</strong> <code>application/json</code> (no file) or <code>multipart/form-data</code> (with image)</p>
+<p><strong>Request Fields:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>en_name</code></td>
+<td>string</td>
+<td><strong>Yes</strong></td>
+<td>English name (unique)</td>
+</tr>
+<tr>
+<td><code>ar_name</code></td>
+<td>string</td>
+<td>No</td>
+<td>Arabic name (unique)</td>
+</tr>
+<tr>
+<td><code>fr_name</code></td>
+<td>string</td>
+<td>No</td>
+<td>French name (unique)</td>
+</tr>
+<tr>
+<td><code>image</code></td>
+<td>file</td>
+<td>No</td>
+<td>Category image (JPEG, PNG, GIF, WebP — max 2MB)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Success Response</strong> <code>201 Created</code>:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Category created&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;en_name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Electronics&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;ar_name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;إلكترونيات&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;fr_name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Électronique&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;imageURL&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://res.cloudinary.com/.../categories/abc.jpg&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;addedByEmail&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;admin@example.com&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;isActive&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2026-06-14T10:00:00.000Z&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2026-06-14T10:00:00.000Z&quot;</span>
+  <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<p><strong>Error Responses:</strong></p>
+<ul>
+<li><code>400</code> — <code>{ &quot;message&quot;: &quot;Category already exists&quot; }</code></li>
+</ul>
+<hr>
+<h3 id="44-put-v1categoryadminid--update-category-admin">4.4 PUT <code>/v1/category/admin/:id</code> — Update Category (Admin)</h3>
+<p><strong>Auth:</strong> Required (admin or superAdmin)<br>
+<strong>Content-Type:</strong> <code>application/json</code> (no file) or <code>multipart/form-data</code> (with image)</p>
+<p><strong>Request Fields (all optional):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>en_name</code></td>
+<td>string</td>
+<td>New English name</td>
+</tr>
+<tr>
+<td><code>ar_name</code></td>
+<td>string</td>
+<td>New Arabic name (send <code>&quot;&quot;</code> to clear)</td>
+</tr>
+<tr>
+<td><code>fr_name</code></td>
+<td>string</td>
+<td>New French name (send <code>&quot;&quot;</code> to clear)</td>
+</tr>
+<tr>
+<td><code>image</code></td>
+<td>file</td>
+<td>New category image (replaces old one)</td>
+</tr>
+<tr>
+<td><code>imageURL</code></td>
+<td>string</td>
+<td>Set image URL directly</td>
+</tr>
+<tr>
+<td><code>addedByEmail</code></td>
+<td>string</td>
+<td>Change admin email</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Success Response</strong> <code>200 OK</code> (same shape as create)</p>
+<p><strong>How it works:</strong> If a new image is uploaded, the <strong>old image is deleted from Cloudinary</strong>.</p>
+<p><strong>Error Responses:</strong></p>
+<ul>
+<li><code>404</code> — <code>{ &quot;message&quot;: &quot;Category not found&quot; }</code></li>
+<li><code>400</code> — <code>{ &quot;message&quot;: &quot;No fields to update&quot; }</code></li>
+</ul>
+<hr>
+<h3 id="45-get-v1categoryadmin--list-all-categories-admin">4.5 GET <code>/v1/category/admin</code> — List All Categories (Admin)</h3>
+<p><strong>Auth:</strong> Required (admin or superAdmin)<br>
+<strong>Includes inactive categories, subcategories, and products.</strong></p>
+<p><strong>Success Response</strong> <code>200 OK</code>:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Categories&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+    <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;en_name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Electronics&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;isActive&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;subcategories&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+        <span class="hljs-punctuation">{</span>
+          <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">&quot;en_name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Mobile Phones&quot;</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">&quot;products&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span> ... <span class="hljs-punctuation">]</span>
+        <span class="hljs-punctuation">}</span>
+      <span class="hljs-punctuation">]</span>
+    <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<hr>
+<h3 id="46-get-v1categoryadminid--get-category-by-id-admin">4.6 GET <code>/v1/category/admin/:id</code> — Get Category by ID (Admin)</h3>
+<p><strong>Auth:</strong> Required (admin or superAdmin)</p>
+<hr>
+<h3 id="47-delete-v1categoryadminid--soft-delete-category-admin">4.7 DELETE <code>/v1/category/admin/:id</code> — Soft Delete Category (Admin)</h3>
+<p><strong>Auth:</strong> Required (admin or superAdmin)</p>
+<p><strong>Cascade behavior:</strong> Deleting a category also sets <code>isActive: false</code> on:</p>
+<ul>
+<li>All subcategories belonging to this category</li>
+<li>All products belonging to those subcategories</li>
+</ul>
+<p><strong>Success Response</strong> <code>200 OK</code>:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Category soft deleted&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<p><strong>Error Responses:</strong></p>
+<ul>
+<li><code>404</code> — <code>{ &quot;message&quot;: &quot;Category not found&quot; }</code></li>
+</ul>
+<hr>
+<h2 id="5-subcategories-v1subcategory">5. Subcategories (<code>/v1/subcategory</code>)</h2>
+<h3 id="51-get-v1subcategory--list-active-subcategories-public">5.1 GET <code>/v1/subcategory</code> — List Active Subcategories (Public)</h3>
+<p><strong>Auth:</strong> None</p>
+<p><strong>Success Response</strong> <code>200 OK</code>:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Subcategories&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+    <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;en_name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Mobile Phones&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;ar_name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;هواتف محمولة&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;fr_name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Téléphones portables&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;imageURL&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://res.cloudinary.com/.../subcategories/abc.jpg&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;categoryId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;addedByEmail&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;admin@example.com&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;isActive&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;...&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;...&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;products&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+        <span class="hljs-punctuation">{</span>
+          <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">&quot;en_name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;iPhone 15&quot;</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">&quot;isActive&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span><span class="hljs-punctuation">,</span>
+          ...
+        <span class="hljs-punctuation">}</span>
+      <span class="hljs-punctuation">]</span>
+    <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<hr>
+<h3 id="52-get-v1subcategoryid--get-active-subcategory-by-id-public">5.2 GET <code>/v1/subcategory/:id</code> — Get Active Subcategory by ID (Public)</h3>
+<p><strong>Auth:</strong> None</p>
+<hr>
+<h3 id="53-get-v1subcategoryadmin--list-all-subcategories-admin">5.3 GET <code>/v1/subcategory/admin</code> — List All Subcategories (Admin)</h3>
+<p><strong>Auth:</strong> Required (admin or superAdmin)<br>
+<strong>Includes inactive subcategories.</strong></p>
+<hr>
+<h3 id="54-get-v1subcategoryadminid--get-subcategory-by-id-admin">5.4 GET <code>/v1/subcategory/admin/:id</code> — Get Subcategory by ID (Admin)</h3>
+<p><strong>Auth:</strong> Required (admin or superAdmin)</p>
+<hr>
+<h3 id="55-post-v1subcategoryadmin--create-subcategory-admin">5.5 POST <code>/v1/subcategory/admin</code> — Create Subcategory (Admin)</h3>
+<p><strong>Auth:</strong> Required (admin or superAdmin)<br>
+<strong>Content-Type:</strong> <code>application/json</code> (no file) or <code>multipart/form-data</code> (with image)</p>
+<p><strong>Request Fields:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>en_name</code></td>
+<td>string</td>
+<td><strong>Yes</strong></td>
+<td>Unique English name</td>
+</tr>
+<tr>
+<td><code>ar_name</code></td>
+<td>string</td>
+<td>No</td>
+<td>Arabic name</td>
+</tr>
+<tr>
+<td><code>fr_name</code></td>
+<td>string</td>
+<td>No</td>
+<td>French name</td>
+</tr>
+<tr>
+<td><code>categoryId</code></td>
+<td>number</td>
+<td><strong>Yes</strong></td>
+<td>Parent category ID</td>
+</tr>
+<tr>
+<td><code>image</code></td>
+<td>file</td>
+<td>No</td>
+<td>Subcategory image (max 2MB)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Success Response</strong> <code>201 Created</code> (same shape as category create)</p>
+<p><strong>Error Responses:</strong></p>
+<ul>
+<li><code>404</code> — <code>{ &quot;message&quot;: &quot;Category not found&quot; }</code></li>
+<li><code>400</code> — <code>{ &quot;message&quot;: &quot;Subcategory already exists&quot; }</code></li>
+</ul>
+<hr>
+<h3 id="56-put-v1subcategoryadminid--update-subcategory-admin">5.6 PUT <code>/v1/subcategory/admin/:id</code> — Update Subcategory (Admin)</h3>
+<p><strong>Auth:</strong> Required (admin or superAdmin)<br>
+<strong>Content-Type:</strong> <code>application/json</code> (no file) or <code>multipart/form-data</code> (with image)</p>
+<p><strong>Optional fields:</strong> <code>en_name</code>, <code>ar_name</code>, <code>fr_name</code>, <code>categoryId</code>, <code>imageURL</code>, <code>image</code>, <code>addedByEmail</code></p>
+<hr>
+<h3 id="57-delete-v1subcategoryadminid--soft-delete-subcategory-admin">5.7 DELETE <code>/v1/subcategory/admin/:id</code> — Soft Delete Subcategory (Admin)</h3>
+<p><strong>Auth:</strong> Required (admin or superAdmin)</p>
+<p><strong>Cascade behavior:</strong> Sets <code>isActive: false</code> on all products belonging to this subcategory.</p>
+<p><strong>Success Response</strong> <code>200 OK</code>:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Subcategory soft deleted&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<hr>
+<h2 id="6-products-v1products">6. Products (<code>/v1/products</code>)</h2>
+<h3 id="61-get-v1products--list-active-products-public">6.1 GET <code>/v1/products</code> — List Active Products (Public)</h3>
+<p><strong>Auth:</strong> None<br>
+<strong>Rate Limit:</strong> None</p>
+<p><strong>Query Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>page</code></td>
+<td>integer</td>
+<td>1</td>
+<td>Page number (min 1)</td>
+</tr>
+<tr>
+<td><code>limit</code></td>
+<td>integer</td>
+<td>10</td>
+<td>Items per page (1–100)</td>
+</tr>
+<tr>
+<td><code>minPrice</code></td>
+<td>number</td>
+<td>—</td>
+<td>Minimum price filter</td>
+</tr>
+<tr>
+<td><code>maxPrice</code></td>
+<td>number</td>
+<td>—</td>
+<td>Maximum price filter</td>
+</tr>
+<tr>
+<td><code>sort</code></td>
+<td>string</td>
+<td>—</td>
+<td>Sort format: <code>price_asc</code>, <code>price_desc</code>, <code>name_asc</code>, <code>name_desc</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example request:</strong></p>
+<pre><code>GET /v1/products?page=1&amp;limit=20&amp;minPrice=100&amp;maxPrice=1000&amp;sort=price_asc
+</code></pre>
+<p><strong>Success Response</strong> <code>200 OK</code>:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Products&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;products&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+      <span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;en_name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;iPhone 15&quot;</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;ar_name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;آيفون 15&quot;</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;fr_name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;iPhone 15&quot;</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;en_description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Latest Apple smartphone&quot;</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;ar_description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;أحدث هاتف من أبل&quot;</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;fr_description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Dernier smartphone Apple&quot;</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;price&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">999.99</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;discount&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">10</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;stock&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">50</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;imageURLs&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;[\&quot;https://res.cloudinary.com/.../products/img1.jpg\&quot;,\&quot;https://res.cloudinary.com/.../products/img2.jpg\&quot;]&quot;</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;subcategoryId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;addedByEmail&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;admin@example.com&quot;</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;isActive&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;currency&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;EGP&quot;</span>
+      <span class="hljs-punctuation">}</span>
+    <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;total&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">45</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;page&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;limit&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">20</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;currency&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;EGP&quot;</span>
+  <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<blockquote>
+<p>Note: <code>imageURLs</code> is a JSON string — parse it on the client to get the array of URLs.
+<code>discount</code> is a percentage (0–100). The effective price = <code>price - (price * discount / 100)</code>.</p>
+</blockquote>
+<hr>
+<h3 id="62-get-v1productsid--get-active-product-by-id-public">6.2 GET <code>/v1/products/:id</code> — Get Active Product by ID (Public)</h3>
+<p><strong>Auth:</strong> None</p>
+<p><strong>Success Response</strong> <code>200 OK</code>:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Product&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;en_name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;iPhone 15&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;price&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">999.99</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;discount&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">10</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;stock&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">50</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;imageURLs&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;[\&quot;https://...\&quot;]&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;currency&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;EGP&quot;</span><span class="hljs-punctuation">,</span>
+    ...
+  <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<hr>
+<h3 id="63-get-v1productscategorycategoryid--products-by-category-public">6.3 GET <code>/v1/products/category/:categoryId</code> — Products by Category (Public)</h3>
+<p><strong>Auth:</strong> None<br>
+<strong>Supports same query parameters as <code>GET /products</code> (page, limit, minPrice, maxPrice, sort).</strong></p>
+<p><strong>How it works:</strong> Finds all active subcategories belonging to the given category, then returns products in those subcategories.</p>
+<p><strong>Success Response</strong> <code>200 OK</code>:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Products&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;products&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;total&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;currency&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;EGP&quot;</span>
+  <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<blockquote>
+<p>Returns <code>products: []</code> if no subcategories found for the category.</p>
+</blockquote>
+<hr>
+<h3 id="64-get-v1productssubcategorysubcategoryid--products-by-subcategory-public">6.4 GET <code>/v1/products/subcategory/:subcategoryId</code> — Products by Subcategory (Public)</h3>
+<p><strong>Auth:</strong> None<br>
+<strong>Supports same query parameters.</strong></p>
+<hr>
+<h3 id="65-post-v1productsadmin--create-product-admin">6.5 POST <code>/v1/products/admin</code> — Create Product (Admin)</h3>
+<p><strong>Auth:</strong> Required (admin or superAdmin)<br>
+<strong>Content-Type:</strong> <code>application/json</code> (no files) or <code>multipart/form-data</code> (with images)</p>
+<p><strong>Request Fields:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>en_name</code></td>
+<td>string</td>
+<td><strong>Yes</strong></td>
+<td>Unique English name</td>
+</tr>
+<tr>
+<td><code>en_description</code></td>
+<td>string</td>
+<td><strong>Yes</strong></td>
+<td>English description</td>
+</tr>
+<tr>
+<td><code>price</code></td>
+<td>number</td>
+<td><strong>Yes</strong></td>
+<td>Price (min 1)</td>
+</tr>
+<tr>
+<td><code>subcategoryId</code></td>
+<td>number</td>
+<td><strong>Yes</strong></td>
+<td>Parent subcategory ID</td>
+</tr>
+<tr>
+<td><code>ar_name</code></td>
+<td>string</td>
+<td>No</td>
+<td>Arabic name</td>
+</tr>
+<tr>
+<td><code>fr_name</code></td>
+<td>string</td>
+<td>No</td>
+<td>French name</td>
+</tr>
+<tr>
+<td><code>ar_description</code></td>
+<td>string</td>
+<td>No</td>
+<td>Arabic description</td>
+</tr>
+<tr>
+<td><code>fr_description</code></td>
+<td>string</td>
+<td>No</td>
+<td>French description</td>
+</tr>
+<tr>
+<td><code>discount</code></td>
+<td>number</td>
+<td>No</td>
+<td>Discount percentage (0–100, default 0)</td>
+</tr>
+<tr>
+<td><code>stock</code></td>
+<td>number</td>
+<td>No</td>
+<td>Stock quantity (min 0, default 0)</td>
+</tr>
+<tr>
+<td><code>images[]</code></td>
+<td>file[]</td>
+<td>No</td>
+<td>Up to 5 images (JPEG, PNG, GIF, WebP — max 2MB each)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Success Response</strong> <code>201 Created</code>:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Product created&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;en_name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;iPhone 15&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;imageURLs&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;[\&quot;https://cloudinary.com/.../img1.jpg\&quot;,\&quot;https://cloudinary.com/.../img2.jpg\&quot;]&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;currency&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;EGP&quot;</span><span class="hljs-punctuation">,</span>
+    ...
+  <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<hr>
+<h3 id="66-put-v1productsadminid--update-product-admin">6.6 PUT <code>/v1/products/admin/:id</code> — Update Product (Admin)</h3>
+<p><strong>Auth:</strong> Required (admin or superAdmin)<br>
+<strong>Content-Type:</strong> <code>application/json</code> (no files) or <code>multipart/form-data</code> (with images)</p>
+<p><strong>How it works with images:</strong></p>
+<ul>
+<li>If new <code>images[]</code> are uploaded, <strong>all existing images are deleted from Cloudinary</strong> and replaced.</li>
+<li>If <code>imageURLs</code> string is sent (without files), it sets the image URLs directly.</li>
+<li>If neither is sent, existing images are kept.</li>
+</ul>
+<hr>
+<h3 id="67-get-v1productsadmin--list-all-products-admin">6.7 GET <code>/v1/products/admin</code> — List All Products (Admin)</h3>
+<p><strong>Auth:</strong> Required (admin or superAdmin)<br>
+<strong>Includes inactive products.</strong></p>
+<hr>
+<h3 id="68-get-v1productsadminid--get-product-by-id-admin">6.8 GET <code>/v1/products/admin/:id</code> — Get Product by ID (Admin)</h3>
+<p><strong>Auth:</strong> Required (admin or superAdmin)<br>
+<strong>Includes inactive products.</strong></p>
+<hr>
+<h3 id="69-delete-v1productsadminid--soft-delete-product-admin">6.9 DELETE <code>/v1/products/admin/:id</code> — Soft Delete Product (Admin)</h3>
+<p><strong>Auth:</strong> Required (admin or superAdmin)</p>
+<p><strong>Success Response</strong> <code>200 OK</code>:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Product soft deleted&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<hr>
+<h2 id="7-cart-v1cart">7. Cart (<code>/v1/cart</code>)</h2>
+<blockquote>
+<p><strong>All cart endpoints require authentication with role <code>user</code>.</strong></p>
+</blockquote>
+<h3 id="71-post-v1cart--add-item-to-cart">7.1 POST <code>/v1/cart</code> — Add Item to Cart</h3>
+<p><strong>Auth:</strong> Required (user)<br>
+<strong>Rate Limit:</strong> None</p>
+<p><strong>Request Body (JSON):</strong></p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;productId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;quantity&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">2</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<p><strong>Behavior:</strong></p>
+<ul>
+<li>If the product is already in the user's cart, the quantity is <strong>increased</strong> by the given amount (not replaced).</li>
+<li>Quantity cannot exceed product's <code>stock</code>.</li>
+<li>Validates that the product exists and is active.</li>
+</ul>
+<p><strong>Success Responses:</strong></p>
+<ul>
+<li><code>201 Created</code> (new item):</li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Item added to cart&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;userId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;productId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;quantity&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">2</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;...&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;...&quot;</span>
+  <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<ul>
+<li><code>200 OK</code> (existing item, quantity increased):</li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Cart updated&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span> ... <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<p><strong>Error Responses:</strong></p>
+<ul>
+<li><code>404</code> — <code>{ &quot;message&quot;: &quot;Product not found or inactive&quot; }</code></li>
+<li><code>400</code> — <code>{ &quot;message&quot;: &quot;Requested quantity exceeds stock (50 available)&quot; }</code></li>
+<li><code>400</code> — <code>{ &quot;message&quot;: &quot;Total quantity would exceed stock (50 available)&quot; }</code></li>
+</ul>
+<hr>
+<h3 id="72-get-v1cart--view-cart">7.2 GET <code>/v1/cart</code> — View Cart</h3>
+<p><strong>Auth:</strong> Required (user)</p>
+<p><strong>Success Response</strong> <code>200 OK</code>:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Cart&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;items&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+      <span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;productId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;quantity&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">2</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;product&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+          <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">&quot;en_name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;iPhone 15&quot;</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">&quot;ar_name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;آيفون 15&quot;</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">&quot;fr_name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;iPhone 15&quot;</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">&quot;price&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">999.99</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">&quot;discount&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">10</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">&quot;stock&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">50</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">&quot;imageURLs&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;[\&quot;https://...\&quot;]&quot;</span>
+        <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;subtotal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1799.98</span>
+      <span class="hljs-punctuation">}</span>
+    <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;subtotal&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1799.98</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;shippingCost&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">50</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;total&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1849.98</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;currency&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;EGP&quot;</span>
+  <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<blockquote>
+<p><code>subtotal</code> = sum of (price - price × discount / 100) × quantity<br>
+<code>shippingCost</code> = based on <code>SHIPPING_COST_TYPE</code> (fixed or percentage of subtotal) from env<br>
+<code>total</code> = subtotal + shippingCost</p>
+</blockquote>
+<hr>
+<h3 id="73-put-v1cartproductid--update-cart-item-quantity">7.3 PUT <code>/v1/cart/:productId</code> — Update Cart Item Quantity</h3>
+<p><strong>Auth:</strong> Required (user)</p>
+<p><strong>Request Body (JSON):</strong></p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;quantity&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">5</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<p><strong>Success Response</strong> <code>200 OK</code>:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Cart updated&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span> ... <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<p><strong>Error Responses:</strong></p>
+<ul>
+<li><code>404</code> — <code>{ &quot;message&quot;: &quot;Item not found in cart&quot; }</code></li>
+<li><code>400</code> — <code>{ &quot;message&quot;: &quot;Product is no longer available&quot; }</code></li>
+<li><code>400</code> — <code>{ &quot;message&quot;: &quot;Requested quantity exceeds stock (50 available)&quot; }</code></li>
+</ul>
+<hr>
+<h3 id="74-delete-v1cartproductid--remove-item-from-cart">7.4 DELETE <code>/v1/cart/:productId</code> — Remove Item from Cart</h3>
+<p><strong>Auth:</strong> Required (user)</p>
+<p><strong>Success Response</strong> <code>200 OK</code>:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Item removed from cart&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<hr>
+<h3 id="75-delete-v1cart--clear-entire-cart">7.5 DELETE <code>/v1/cart</code> — Clear Entire Cart</h3>
+<p><strong>Auth:</strong> Required (user)</p>
+<p><strong>Success Response</strong> <code>200 OK</code>:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Cart cleared&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<hr>
+<h2 id="8-wishlist-v1wishlist">8. Wishlist (<code>/v1/wishlist</code>)</h2>
+<blockquote>
+<p><strong>All wishlist endpoints require authentication with role <code>user</code>.</strong></p>
+</blockquote>
+<h3 id="81-post-v1wishlistproductid--add-to-wishlist">8.1 POST <code>/v1/wishlist/:productId</code> — Add to Wishlist</h3>
+<p><strong>Auth:</strong> Required (user)</p>
+<p><strong>Path Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>productId</code></td>
+<td>number</td>
+<td>Product ID to add</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Success Response</strong> <code>201 Created</code>:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Added to wishlist&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;userId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;productId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;...&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;...&quot;</span>
+  <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<p><strong>Error Responses:</strong></p>
+<ul>
+<li><code>404</code> — <code>{ &quot;message&quot;: &quot;Product not found or inactive&quot; }</code></li>
+<li><code>400</code> — <code>{ &quot;message&quot;: &quot;Product already in wishlist&quot; }</code></li>
+</ul>
+<hr>
+<h3 id="82-get-v1wishlist--view-wishlist">8.2 GET <code>/v1/wishlist</code> — View Wishlist</h3>
+<p><strong>Auth:</strong> Required (user)</p>
+<p><strong>Success Response</strong> <code>200 OK</code>:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Wishlist&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+    <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;userId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;productId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;product&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;en_name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;iPhone 15&quot;</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;price&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">999.99</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;discount&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">10</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;stock&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">50</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;imageURLs&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;[\&quot;https://...\&quot;]&quot;</span>
+      <span class="hljs-punctuation">}</span>
+    <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<hr>
+<h3 id="83-delete-v1wishlistproductid--remove-from-wishlist">8.3 DELETE <code>/v1/wishlist/:productId</code> — Remove from Wishlist</h3>
+<p><strong>Auth:</strong> Required (user)</p>
+<p><strong>Success Response</strong> <code>200 OK</code>:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Removed from wishlist&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<p><strong>Error Responses:</strong></p>
+<ul>
+<li><code>404</code> — <code>{ &quot;message&quot;: &quot;Item not found in wishlist&quot; }</code></li>
+</ul>
+<hr>
+<h2 id="9-orders--payment-v1order">9. Orders &amp; Payment (<code>/v1/order</code>)</h2>
+<h3 id="91-post-v1order--create-order">9.1 POST <code>/v1/order</code> — Create Order</h3>
+<p><strong>Auth:</strong> Required (user)<br>
+<strong>Rate Limit:</strong> 1 request per 60 seconds</p>
+<p><strong>Request Body (JSON):</strong></p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;items&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+    <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;productId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;quantity&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">2</span> <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;productId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">3</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;quantity&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span> <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;paymentMethod&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;cod&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;shippingAddress&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;fullName&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;John Doe&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;phone&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;+201234567890&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;street&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;123 Main St&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;city&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Cairo&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;state&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Cairo&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;zipCode&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;12345&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;country&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Egypt&quot;</span>
+  <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>items[].productId</code></td>
+<td>number</td>
+<td><strong>Yes</strong></td>
+<td>Product ID</td>
+</tr>
+<tr>
+<td><code>items[].quantity</code></td>
+<td>number</td>
+<td><strong>Yes</strong></td>
+<td>Quantity (min 1)</td>
+</tr>
+<tr>
+<td><code>paymentMethod</code></td>
+<td>string</td>
+<td><strong>Yes</strong></td>
+<td><code>cod</code> (Cash on Delivery) or <code>card</code> (Stripe)</td>
+</tr>
+<tr>
+<td><code>shippingAddress</code></td>
+<td>object</td>
+<td><strong>Yes</strong></td>
+<td>Shipping address object</td>
+</tr>
+</tbody>
+</table>
+<p><strong>How it works (behind the scenes):</strong></p>
+<ol>
+<li><strong>Stock validation &amp; deduction:</strong> Uses a <strong>database transaction with pessimistic locking</strong> (<code>t.LOCK.UPDATE</code>). For each item:
+<ul>
+<li>Checks product exists</li>
+<li>Checks stock &gt;= requested quantity</li>
+<li>Calculates discounted price: <code>price - (price * discount / 100)</code></li>
+<li>Deducts quantity from stock</li>
+</ul>
+</li>
+<li><strong>Total calculation:</strong>
+<ul>
+<li>Subtotal = sum of (discountedPrice × quantity) for all items</li>
+<li>Shipping cost: <strong>Only applied for COD orders</strong>
+<ul>
+<li>If <code>SHIPPING_COST_TYPE = fixed</code>: shipping = <code>SHIPPING_COST_VALUE</code> (e.g. 50 EGP)</li>
+<li>If <code>SHIPPING_COST_TYPE = percentage</code>: shipping = subtotal × <code>SHIPPING_COST_VALUE</code> / 100</li>
+</ul>
+</li>
+<li>Grand total = subtotal + shipping cost</li>
+</ul>
+</li>
+<li><strong>Order creation:</strong> Stores items (JSON), shipping address (JSON), amounts, payment/order status.</li>
+</ol>
+<hr>
+<h4 id="a-cod-payment-response-201-created">A) COD Payment Response <code>201 Created</code>:</h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Order created&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;userId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;items&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+      <span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">&quot;productId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;quantity&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">2</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;price&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">899.99</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;en_name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;iPhone 15&quot;</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;ar_name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;آيفون 15&quot;</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;fr_name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;iPhone 15&quot;</span>
+      <span class="hljs-punctuation">}</span>
+    <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;totalAmount&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1849.98</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;shippingCost&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">50</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;paymentMethod&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;cod&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;paymentStatus&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;pending&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;orderStatus&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;pending&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;shippingAddress&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;fullName&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;John Doe&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;phone&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;+201234567890&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;street&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;123 Main St&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;city&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Cairo&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;state&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Cairo&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;zipCode&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;12345&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;country&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Egypt&quot;</span>
+    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;currency&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;EGP&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;...&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;updatedAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;...&quot;</span>
+  <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<hr>
+<h4 id="b-card-stripe-payment-response-201-created">B) Card (Stripe) Payment Response <code>201 Created</code>:</h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Redirect to payment&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;url&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://checkout.stripe.com/c/pay/cs_test_...&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;orderId&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span>
+  <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<blockquote>
+<p><strong>Frontend flow:</strong> Redirect the user to the <code>url</code>. After successful payment, Stripe redirects to:</p>
+<ul>
+<li>Success: <code>{BASE_URL}/complete?session_id={CHECKOUT_SESSION_ID}</code></li>
+<li>Cancel: <code>{BASE_URL}/cancel</code></li>
+</ul>
+</blockquote>
+<p><strong>Error Responses:</strong></p>
+<ul>
+<li><code>400</code> — <code>{ &quot;message&quot;: &quot;Insufficient stock for iPhone 15. Available: 5, requested: 10&quot; }</code></li>
+<li><code>404</code> — <code>{ &quot;message&quot;: &quot;Product with id 999 not found&quot; }</code></li>
+</ul>
+<hr>
+<h3 id="92-get-v1ordermine--get-my-orders">9.2 GET <code>/v1/order/mine</code> — Get My Orders</h3>
+<p><strong>Auth:</strong> Required (user)</p>
+<p><strong>Success Response</strong> <code>200 OK</code>:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Orders&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;orders&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+      <span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;totalAmount&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1849.98</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;orderStatus&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;pending&quot;</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;paymentStatus&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;pending&quot;</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;paymentMethod&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;cod&quot;</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;items&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span> ... <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;shippingAddress&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span> ... <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;createdAt&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;...&quot;</span>
+      <span class="hljs-punctuation">}</span>
+    <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;currency&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;EGP&quot;</span>
+  <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<blockquote>
+<p>Orders are returned newest first.</p>
+</blockquote>
+<hr>
+<h3 id="93-get-v1orderid--get-order-by-id">9.3 GET <code>/v1/order/:id</code> — Get Order by ID</h3>
+<p><strong>Auth:</strong> Required (user, admin, or superAdmin)<br>
+<strong>Access rules:</strong></p>
+<ul>
+<li>Regular <code>user</code> can only view their own orders</li>
+<li><code>admin</code> and <code>superAdmin</code> can view any order</li>
+</ul>
+<p><strong>Error Responses:</strong></p>
+<ul>
+<li><code>403</code> — <code>{ &quot;message&quot;: &quot;Access denied&quot; }</code></li>
+</ul>
+<hr>
+<h3 id="94-get-v1orderadmin--get-all-orders-admin">9.4 GET <code>/v1/order/admin</code> — Get All Orders (Admin)</h3>
+<p><strong>Auth:</strong> Required (admin or superAdmin)</p>
+<hr>
+<h3 id="95-patch-v1orderadminid--update-order-status-admin">9.5 PATCH <code>/v1/order/admin/:id</code> — Update Order Status (Admin)</h3>
+<p><strong>Auth:</strong> Required (admin or superAdmin)</p>
+<p><strong>Request Body (JSON):</strong></p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;orderStatus&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;shipped&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;paymentStatus&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;paid&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Allowed Values</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>orderStatus</code></td>
+<td>string</td>
+<td><strong>Yes</strong></td>
+<td><code>pending</code>, <code>processing</code>, <code>shipped</code>, <code>delivered</code>, <code>cancelled</code></td>
+</tr>
+<tr>
+<td><code>paymentStatus</code></td>
+<td>string</td>
+<td>No</td>
+<td><code>pending</code>, <code>paid</code>, <code>failed</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Success Response</strong> <code>200 OK</code>:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Order updated&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;orderStatus&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;shipped&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;paymentStatus&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;paid&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;items&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span> ... <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;shippingAddress&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span> ... <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;currency&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;EGP&quot;</span>
+  <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<hr>
+<h3 id="96-post-v1orderwebhook--stripe-webhook">9.6 POST <code>/v1/order/webhook</code> — Stripe Webhook</h3>
+<p><strong>Auth:</strong> None (Stripe sends this)<br>
+<strong>Content-Type:</strong> <code>application/json</code> (raw body)</p>
+<p><strong>Purpose:</strong> Receives Stripe events. On <code>checkout.session.completed</code>, updates the order:</p>
+<ul>
+<li><code>paymentStatus</code> → <code>paid</code></li>
+<li><code>orderStatus</code> → <code>processing</code></li>
+</ul>
+<p><strong>Success Response</strong> <code>200 OK</code>:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;received&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<p><strong>How to test locally:</strong></p>
+<ul>
+<li>Use <a href="https://stripe.com/docs/stripe-cli">Stripe CLI</a> to forward webhooks:<pre><code class="language-bash">stripe listen --forward-to localhost:3007/v1/order/webhook
+</code></pre>
+</li>
+<li>Set the generated webhook signing secret as <code>STRIPE_WEBHOOK_SECRET</code> in your <code>.env</code></li>
+</ul>
+<hr>
+<h2 id="10-security-logs-v1admin">10. Security Logs (<code>/v1/admin</code>)</h2>
+<h3 id="101-get-v1adminsecuritylogs">10.1 GET <code>/v1/admin/security/logs</code></h3>
+<p><strong>Auth:</strong> Required (superAdmin only)</p>
+<p><strong>Success Response</strong> <code>200 OK</code>:</p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Security logs&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+    <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;timestamp&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2026-06-14T10:15:30&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;timeZone&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Africa/Cairo&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;ipAddress&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;192.168.1.45&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;SECURITY_ALERT&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;potentialInjection&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;SELECT * FROM users&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Possible injection attempt detected&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;level&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;warn&quot;</span>
+    <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<blockquote>
+<p>Returns parsed entries from <code>security.log</code>. Returns empty array if file doesn't exist or is empty.</p>
+</blockquote>
+<p><strong>Error Responses:</strong></p>
+<ul>
+<li><code>403</code> — <code>{ &quot;message&quot;: &quot;Access denied&quot; }</code> (if not superAdmin)</li>
+</ul>
+<hr>
+<h2 id="11-error-handling--auth-system">11. Error Handling &amp; Auth System</h2>
+<h3 id="global-response-format">Global Response Format</h3>
+<p>All API responses follow a consistent format:</p>
+<p><strong>Success:</strong></p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Action completed&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span> ... <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<p><strong>Error:</strong></p>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Error description&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;error&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span> ... <span class="hljs-punctuation">]</span>  <span class="hljs-comment">// optional, only for validation errors</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h3 id="http-status-codes-used">HTTP Status Codes Used</h3>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>200</code></td>
+<td>Success (GET, PUT, PATCH, DELETE)</td>
+</tr>
+<tr>
+<td><code>201</code></td>
+<td>Created (POST)</td>
+</tr>
+<tr>
+<td><code>400</code></td>
+<td>Validation error / Bad request</td>
+</tr>
+<tr>
+<td><code>401</code></td>
+<td>Unauthorized / Invalid token</td>
+</tr>
+<tr>
+<td><code>403</code></td>
+<td>Forbidden (wrong role or blocked IP)</td>
+</tr>
+<tr>
+<td><code>404</code></td>
+<td>Resource not found</td>
+</tr>
+<tr>
+<td><code>413</code></td>
+<td>Request entity too large (increase <code>limit</code> in <code>express.json()</code>)</td>
+</tr>
+<tr>
+<td><code>500</code></td>
+<td>Internal server error</td>
+</tr>
+</tbody>
+</table>
+<h3 id="authentication-flow">Authentication Flow</h3>
+<ol>
+<li><strong>Signup</strong> → User receives verification email → User clicks link → <code>isActive: true</code></li>
+<li><strong>Login</strong> → Server returns <code>accessToken</code> (30min) + <code>refreshToken</code> (1 year)</li>
+<li><strong>Authenticated requests</strong> → Include header: <code>Authorization: &lt;role&gt; &lt;token&gt;</code></li>
+<li><strong>Token verification</strong> → Server extracts bearer role, selects role-specific secret, verifies JWT</li>
+<li><strong>Refresh token</strong> → When <code>accessToken</code> expires, call <code>POST /v1/auth/access-token</code> with the <code>refreshToken</code> to get a new <code>accessToken</code></li>
+</ol>
+<h3 id="role-based-access-control">Role-Based Access Control</h3>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Access Level</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>user</code></td>
+<td>Browse products, manage cart/wishlist, place orders, view own orders</td>
+</tr>
+<tr>
+<td><code>admin</code></td>
+<td>CRUD categories, subcategories, products; view all orders; update order status</td>
+</tr>
+<tr>
+<td><code>superAdmin</code></td>
+<td>All admin privileges + view security logs</td>
+</tr>
+</tbody>
+</table>
+<h3 id="security-injection-detection">Security: Injection Detection</h3>
+<p>All input validation uses a custom <code>detectInjection</code> Joi rule that scans for:</p>
+<ul>
+<li><strong>SQL keywords:</strong> <code>SELECT</code>, <code>DROP</code>, <code>UNION</code>, <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code></li>
+<li><strong>NoSQL operators:</strong> <code>$ne</code>, <code>$eq</code>, <code>$gt</code>, <code>$lt</code>, <code>$regex</code></li>
+<li><strong>Comment syntax:</strong> <code>--</code>, <code>;</code></li>
+</ul>
+<p>When detected:</p>
+<ol>
+<li>The request is rejected with <code>400 Bad Request</code></li>
+<li>The incident is <strong>logged</strong> to <code>security.log</code> via Winston</li>
+<li>The attacker's <strong>IP is permanently blocked</strong> in Redis (key: <code>blocked:&lt;ip&gt;</code>)</li>
+<li>All subsequent requests from that IP receive <code>403 Access denied. IP is permanently blocked.</code></li>
+<li>To unblock: <code>DEL blocked:&lt;ip&gt;</code> in Redis</li>
+</ol>
+<h3 id="stripe-payment-flow-card-orders">Stripe Payment Flow (Card Orders)</h3>
+<pre><code>User → POST /v1/order (paymentMethod: &quot;card&quot;)
+  → Backend: validates stock, deducts stock, creates order (status: pending)
+  → Backend: creates Stripe Checkout Session with line items + metadata (orderId)
+  → Response: { url: &quot;https://checkout.stripe.com/...&quot;, orderId: 1 }
+
+Frontend → redirects user to Stripe Checkout URL
+User → enters card details on Stripe hosted page
+User → completes/cancels payment
+
+Stripe → POST /v1/order/webhook (checkout.session.completed)
+  → Backend: verifies webhook signature
+  → Backend: updates order → paymentStatus: &quot;paid&quot;, orderStatus: &quot;processing&quot;
+  → Response: { received: true }
+
+Stripe → redirects user to {BASE_URL}/complete?session_id={CHECKOUT_SESSION_ID}
+</code></pre>
+<h3 id="image-upload">Image Upload</h3>
+<p>Two modes configurable via <code>Image_TYPE</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Storage</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CLOUDINARY</code> (default)</td>
+<td>Cloudinary</td>
+<td>Images uploaded to Cloudinary CDN. Deletes old images on update.</td>
+</tr>
+<tr>
+<td><code>SERVER</code></td>
+<td>Local server</td>
+<td>Images saved to <code>uploads/</code> folder. Served via <code>{SERVER}/uploads/{folder}/{filename}</code></td>
+</tr>
+</tbody>
+</table>
+<p>Supported formats: JPEG, PNG, GIF, WebP (validated by <code>file-type</code> package, not just extension).</p>
+<p>Max upload size: <strong>2MB</strong> per file (configurable via <code>upload(2)</code> parameter).</p>
+<hr>
+<h2 id="12-database-models">12. Database Models</h2>
+<h3 id="user-users-table">User (<code>users</code> table)</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>INTEGER (PK, auto)</td>
+<td>Unique ID</td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td>STRING (unique)</td>
+<td>Username</td>
+</tr>
+<tr>
+<td><code>email</code></td>
+<td>STRING (unique)</td>
+<td>Email address</td>
+</tr>
+<tr>
+<td><code>password</code></td>
+<td>STRING (nullable)</td>
+<td>Hashed password (null for Google OAuth users)</td>
+</tr>
+<tr>
+<td><code>isActive</code></td>
+<td>BOOLEAN</td>
+<td>Email verified / soft delete</td>
+</tr>
+<tr>
+<td><code>imageURL</code></td>
+<td>STRING (nullable)</td>
+<td>Profile image URL</td>
+</tr>
+<tr>
+<td><code>role</code></td>
+<td>ENUM('admin','user','superAdmin')</td>
+<td>User role</td>
+</tr>
+<tr>
+<td><code>phone</code></td>
+<td>STRING (nullable)</td>
+<td>Phone number</td>
+</tr>
+<tr>
+<td><code>googleId</code></td>
+<td>STRING (nullable)</td>
+<td>Google OAuth ID</td>
+</tr>
+<tr>
+<td><code>isBlocked</code></td>
+<td>BOOLEAN</td>
+<td>Manually blocked flag</td>
+</tr>
+</tbody>
+</table>
+<h3 id="category-categories-table">Category (<code>categories</code> table)</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>INTEGER (PK, auto)</td>
+<td>Unique ID</td>
+</tr>
+<tr>
+<td><code>en_name</code></td>
+<td>STRING (unique)</td>
+<td>English name</td>
+</tr>
+<tr>
+<td><code>ar_name</code></td>
+<td>STRING (unique, nullable)</td>
+<td>Arabic name</td>
+</tr>
+<tr>
+<td><code>fr_name</code></td>
+<td>STRING (unique, nullable)</td>
+<td>French name</td>
+</tr>
+<tr>
+<td><code>imageURL</code></td>
+<td>STRING (nullable)</td>
+<td>Category image URL</td>
+</tr>
+<tr>
+<td><code>addedByEmail</code></td>
+<td>STRING</td>
+<td>Admin email who created it</td>
+</tr>
+<tr>
+<td><code>isActive</code></td>
+<td>BOOLEAN</td>
+<td>Soft delete flag</td>
+</tr>
+</tbody>
+</table>
+<p>Relations: <code>hasMany → Subcategory</code></p>
+<h3 id="subcategory-subcategories-table">Subcategory (<code>subcategories</code> table)</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>INTEGER (PK, auto)</td>
+<td>Unique ID</td>
+</tr>
+<tr>
+<td><code>en_name</code></td>
+<td>STRING (unique)</td>
+<td>English name</td>
+</tr>
+<tr>
+<td><code>ar_name</code></td>
+<td>STRING (unique, nullable)</td>
+<td>Arabic name</td>
+</tr>
+<tr>
+<td><code>fr_name</code></td>
+<td>STRING (unique, nullable)</td>
+<td>French name</td>
+</tr>
+<tr>
+<td><code>imageURL</code></td>
+<td>STRING (nullable)</td>
+<td>Subcategory image URL</td>
+</tr>
+<tr>
+<td><code>categoryId</code></td>
+<td>INTEGER (FK)</td>
+<td>Parent category ID</td>
+</tr>
+<tr>
+<td><code>addedByEmail</code></td>
+<td>STRING</td>
+<td>Admin email who created it</td>
+</tr>
+<tr>
+<td><code>isActive</code></td>
+<td>BOOLEAN</td>
+<td>Soft delete flag</td>
+</tr>
+</tbody>
+</table>
+<p>Relations: <code>belongsTo → Category</code>, <code>hasMany → Product</code></p>
+<h3 id="product-products-table">Product (<code>products</code> table)</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>INTEGER (PK, auto)</td>
+<td>Unique ID</td>
+</tr>
+<tr>
+<td><code>en_name</code></td>
+<td>STRING (unique)</td>
+<td>English name</td>
+</tr>
+<tr>
+<td><code>ar_name</code></td>
+<td>STRING (unique, nullable)</td>
+<td>Arabic name</td>
+</tr>
+<tr>
+<td><code>fr_name</code></td>
+<td>STRING (unique, nullable)</td>
+<td>French name</td>
+</tr>
+<tr>
+<td><code>en_description</code></td>
+<td>TEXT</td>
+<td>English description</td>
+</tr>
+<tr>
+<td><code>ar_description</code></td>
+<td>TEXT (nullable)</td>
+<td>Arabic description</td>
+</tr>
+<tr>
+<td><code>fr_description</code></td>
+<td>TEXT (nullable)</td>
+<td>French description</td>
+</tr>
+<tr>
+<td><code>price</code></td>
+<td>DECIMAL</td>
+<td>Base price</td>
+</tr>
+<tr>
+<td><code>discount</code></td>
+<td>INTEGER</td>
+<td>Discount percentage (0–100)</td>
+</tr>
+<tr>
+<td><code>stock</code></td>
+<td>INTEGER</td>
+<td>Available stock quantity</td>
+</tr>
+<tr>
+<td><code>imageURLs</code></td>
+<td>TEXT</td>
+<td>JSON array of image URLs</td>
+</tr>
+<tr>
+<td><code>subcategoryId</code></td>
+<td>INTEGER (FK)</td>
+<td>Parent subcategory ID</td>
+</tr>
+<tr>
+<td><code>addedByEmail</code></td>
+<td>STRING</td>
+<td>Admin email who created it</td>
+</tr>
+<tr>
+<td><code>isActive</code></td>
+<td>BOOLEAN</td>
+<td>Soft delete flag</td>
+</tr>
+</tbody>
+</table>
+<p>Relations: <code>belongsTo → Subcategory</code>, <code>hasMany → Cart</code>, <code>hasMany → Wishlist</code></p>
+<h3 id="cart-carts-table">Cart (<code>carts</code> table)</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>INTEGER (PK, auto)</td>
+<td>Unique ID</td>
+</tr>
+<tr>
+<td><code>userId</code></td>
+<td>INTEGER</td>
+<td>User ID (owner)</td>
+</tr>
+<tr>
+<td><code>productId</code></td>
+<td>INTEGER (FK)</td>
+<td>Product ID</td>
+</tr>
+<tr>
+<td><code>quantity</code></td>
+<td>INTEGER</td>
+<td>Quantity (min 1)</td>
+</tr>
+</tbody>
+</table>
+<p>Relations: <code>belongsTo → Product</code></p>
+<h3 id="wishlist-wishlists-table">Wishlist (<code>wishlists</code> table)</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>INTEGER (PK, auto)</td>
+<td>Unique ID</td>
+</tr>
+<tr>
+<td><code>userId</code></td>
+<td>INTEGER</td>
+<td>User ID (owner)</td>
+</tr>
+<tr>
+<td><code>productId</code></td>
+<td>INTEGER (FK)</td>
+<td>Product ID</td>
+</tr>
+</tbody>
+</table>
+<p>Relations: <code>belongsTo → Product</code></p>
+<h3 id="order-orders-table">Order (<code>orders</code> table)</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>INTEGER (PK, auto)</td>
+<td>Unique ID</td>
+</tr>
+<tr>
+<td><code>userId</code></td>
+<td>INTEGER</td>
+<td>User ID (owner)</td>
+</tr>
+<tr>
+<td><code>items</code></td>
+<td>TEXT</td>
+<td>JSON: array of { productId, quantity, price, en_name, ar_name, fr_name }</td>
+</tr>
+<tr>
+<td><code>totalAmount</code></td>
+<td>DECIMAL(10,2)</td>
+<td>Grand total (subtotal + shipping)</td>
+</tr>
+<tr>
+<td><code>shippingCost</code></td>
+<td>DECIMAL(10,2)</td>
+<td>Shipping cost (0 for card orders)</td>
+</tr>
+<tr>
+<td><code>paymentMethod</code></td>
+<td>ENUM('cod','card')</td>
+<td>Payment method</td>
+</tr>
+<tr>
+<td><code>paymentStatus</code></td>
+<td>ENUM('pending','paid','failed')</td>
+<td>Payment status</td>
+</tr>
+<tr>
+<td><code>orderStatus</code></td>
+<td>ENUM('pending','processing','shipped','delivered','cancelled')</td>
+<td>Order fulfillment status</td>
+</tr>
+<tr>
+<td><code>shippingAddress</code></td>
+<td>TEXT</td>
+<td>JSON: { fullName, phone, street, city, state, zipCode, country }</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="quick-reference-all-endpoints">Quick Reference: All Endpoints</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Auth</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>POST</td>
+<td><code>/v1/auth/signup</code></td>
+<td>—</td>
+<td>Register new user</td>
+</tr>
+<tr>
+<td>2</td>
+<td>POST</td>
+<td><code>/v1/auth/login</code></td>
+<td>—</td>
+<td>Login with email/password</td>
+</tr>
+<tr>
+<td>3</td>
+<td>GET</td>
+<td><code>/v1/auth/google/signup</code></td>
+<td>—</td>
+<td>Google OAuth signup</td>
+</tr>
+<tr>
+<td>4</td>
+<td>GET</td>
+<td><code>/v1/auth/google/signup/callback</code></td>
+<td>—</td>
+<td>Google signup callback</td>
+</tr>
+<tr>
+<td>5</td>
+<td>GET</td>
+<td><code>/v1/auth/google/login</code></td>
+<td>—</td>
+<td>Google OAuth login</td>
+</tr>
+<tr>
+<td>6</td>
+<td>GET</td>
+<td><code>/v1/auth/google/login/callback</code></td>
+<td>—</td>
+<td>Google login callback</td>
+</tr>
+<tr>
+<td>7</td>
+<td>GET</td>
+<td><code>/v1/auth/verify-email/:token</code></td>
+<td>—</td>
+<td>Verify email</td>
+</tr>
+<tr>
+<td>8</td>
+<td>POST</td>
+<td><code>/v1/auth/resend-verify-email</code></td>
+<td>R60</td>
+<td>Resend verification email</td>
+</tr>
+<tr>
+<td>9</td>
+<td>POST</td>
+<td><code>/v1/auth/forgot-password</code></td>
+<td>R60</td>
+<td>Send password reset email</td>
+</tr>
+<tr>
+<td>10</td>
+<td>POST</td>
+<td><code>/v1/auth/reset-password/:token</code></td>
+<td>R60</td>
+<td>Reset password</td>
+</tr>
+<tr>
+<td>11</td>
+<td>POST</td>
+<td><code>/v1/auth/access-token</code></td>
+<td>—</td>
+<td>Refresh access token</td>
+</tr>
+<tr>
+<td>12</td>
+<td>GET</td>
+<td><code>/v1/user/profile</code></td>
+<td>User</td>
+<td>Get profile</td>
+</tr>
+<tr>
+<td>13</td>
+<td>PUT</td>
+<td><code>/v1/user/profile</code></td>
+<td>User</td>
+<td>Update profile</td>
+</tr>
+<tr>
+<td>14</td>
+<td>POST</td>
+<td><code>/v1/user/upload-avatar</code></td>
+<td>User</td>
+<td>Upload avatar</td>
+</tr>
+<tr>
+<td>15</td>
+<td>POST</td>
+<td><code>/v1/phone/send-otp</code></td>
+<td>User</td>
+<td>Send OTP via WhatsApp</td>
+</tr>
+<tr>
+<td>16</td>
+<td>POST</td>
+<td><code>/v1/phone/verify-otp</code></td>
+<td>User</td>
+<td>Verify OTP</td>
+</tr>
+<tr>
+<td>17</td>
+<td>GET</td>
+<td><code>/v1/category</code></td>
+<td>—</td>
+<td>List active categories</td>
+</tr>
+<tr>
+<td>18</td>
+<td>GET</td>
+<td><code>/v1/category/:id/subcategories</code></td>
+<td>—</td>
+<td>Get subcategories by category</td>
+</tr>
+<tr>
+<td>19</td>
+<td>POST</td>
+<td><code>/v1/category/admin</code></td>
+<td>Admin</td>
+<td>Create category</td>
+</tr>
+<tr>
+<td>20</td>
+<td>PUT</td>
+<td><code>/v1/category/admin/:id</code></td>
+<td>Admin</td>
+<td>Update category</td>
+</tr>
+<tr>
+<td>21</td>
+<td>GET</td>
+<td><code>/v1/category/admin</code></td>
+<td>Admin</td>
+<td>List all categories</td>
+</tr>
+<tr>
+<td>22</td>
+<td>GET</td>
+<td><code>/v1/category/admin/:id</code></td>
+<td>Admin</td>
+<td>Get category by ID</td>
+</tr>
+<tr>
+<td>23</td>
+<td>DELETE</td>
+<td><code>/v1/category/admin/:id</code></td>
+<td>Admin</td>
+<td>Soft delete category</td>
+</tr>
+<tr>
+<td>24</td>
+<td>GET</td>
+<td><code>/v1/subcategory</code></td>
+<td>—</td>
+<td>List active subcategories</td>
+</tr>
+<tr>
+<td>25</td>
+<td>GET</td>
+<td><code>/v1/subcategory/:id</code></td>
+<td>—</td>
+<td>Get active subcategory</td>
+</tr>
+<tr>
+<td>26</td>
+<td>POST</td>
+<td><code>/v1/subcategory/admin</code></td>
+<td>Admin</td>
+<td>Create subcategory</td>
+</tr>
+<tr>
+<td>27</td>
+<td>PUT</td>
+<td><code>/v1/subcategory/admin/:id</code></td>
+<td>Admin</td>
+<td>Update subcategory</td>
+</tr>
+<tr>
+<td>28</td>
+<td>GET</td>
+<td><code>/v1/subcategory/admin</code></td>
+<td>Admin</td>
+<td>List all subcategories</td>
+</tr>
+<tr>
+<td>29</td>
+<td>GET</td>
+<td><code>/v1/subcategory/admin/:id</code></td>
+<td>Admin</td>
+<td>Get subcategory by ID</td>
+</tr>
+<tr>
+<td>30</td>
+<td>DELETE</td>
+<td><code>/v1/subcategory/admin/:id</code></td>
+<td>Admin</td>
+<td>Soft delete subcategory</td>
+</tr>
+<tr>
+<td>31</td>
+<td>GET</td>
+<td><code>/v1/products</code></td>
+<td>—</td>
+<td>List active products</td>
+</tr>
+<tr>
+<td>32</td>
+<td>GET</td>
+<td><code>/v1/products/:id</code></td>
+<td>—</td>
+<td>Get active product</td>
+</tr>
+<tr>
+<td>33</td>
+<td>GET</td>
+<td><code>/v1/products/category/:categoryId</code></td>
+<td>—</td>
+<td>Products by category</td>
+</tr>
+<tr>
+<td>34</td>
+<td>GET</td>
+<td><code>/v1/products/subcategory/:subcategoryId</code></td>
+<td>—</td>
+<td>Products by subcategory</td>
+</tr>
+<tr>
+<td>35</td>
+<td>POST</td>
+<td><code>/v1/products/admin</code></td>
+<td>Admin</td>
+<td>Create product</td>
+</tr>
+<tr>
+<td>36</td>
+<td>PUT</td>
+<td><code>/v1/products/admin/:id</code></td>
+<td>Admin</td>
+<td>Update product</td>
+</tr>
+<tr>
+<td>37</td>
+<td>GET</td>
+<td><code>/v1/products/admin</code></td>
+<td>Admin</td>
+<td>List all products</td>
+</tr>
+<tr>
+<td>38</td>
+<td>GET</td>
+<td><code>/v1/products/admin/:id</code></td>
+<td>Admin</td>
+<td>Get product by ID</td>
+</tr>
+<tr>
+<td>39</td>
+<td>DELETE</td>
+<td><code>/v1/products/admin/:id</code></td>
+<td>Admin</td>
+<td>Soft delete product</td>
+</tr>
+<tr>
+<td>40</td>
+<td>POST</td>
+<td><code>/v1/cart</code></td>
+<td>User</td>
+<td>Add item to cart</td>
+</tr>
+<tr>
+<td>41</td>
+<td>GET</td>
+<td><code>/v1/cart</code></td>
+<td>User</td>
+<td>View cart</td>
+</tr>
+<tr>
+<td>42</td>
+<td>PUT</td>
+<td><code>/v1/cart/:productId</code></td>
+<td>User</td>
+<td>Update cart quantity</td>
+</tr>
+<tr>
+<td>43</td>
+<td>DELETE</td>
+<td><code>/v1/cart/:productId</code></td>
+<td>User</td>
+<td>Remove item from cart</td>
+</tr>
+<tr>
+<td>44</td>
+<td>DELETE</td>
+<td><code>/v1/cart</code></td>
+<td>User</td>
+<td>Clear cart</td>
+</tr>
+<tr>
+<td>45</td>
+<td>POST</td>
+<td><code>/v1/wishlist/:productId</code></td>
+<td>User</td>
+<td>Add to wishlist</td>
+</tr>
+<tr>
+<td>46</td>
+<td>GET</td>
+<td><code>/v1/wishlist</code></td>
+<td>User</td>
+<td>View wishlist</td>
+</tr>
+<tr>
+<td>47</td>
+<td>DELETE</td>
+<td><code>/v1/wishlist/:productId</code></td>
+<td>User</td>
+<td>Remove from wishlist</td>
+</tr>
+<tr>
+<td>48</td>
+<td>POST</td>
+<td><code>/v1/order</code></td>
+<td>User (R60)</td>
+<td>Create order (COD/Card)</td>
+</tr>
+<tr>
+<td>49</td>
+<td>GET</td>
+<td><code>/v1/order/mine</code></td>
+<td>User</td>
+<td>Get my orders</td>
+</tr>
+<tr>
+<td>50</td>
+<td>GET</td>
+<td><code>/v1/order/:id</code></td>
+<td>User</td>
+<td>Get order by ID</td>
+</tr>
+<tr>
+<td>51</td>
+<td>GET</td>
+<td><code>/v1/order/admin</code></td>
+<td>Admin</td>
+<td>Get all orders</td>
+</tr>
+<tr>
+<td>52</td>
+<td>PATCH</td>
+<td><code>/v1/order/admin/:id</code></td>
+<td>Admin</td>
+<td>Update order status</td>
+</tr>
+<tr>
+<td>53</td>
+<td>POST</td>
+<td><code>/v1/order/webhook</code></td>
+<td>—</td>
+<td>Stripe webhook</td>
+</tr>
+<tr>
+<td>54</td>
+<td>GET</td>
+<td><code>/v1/admin/security/logs</code></td>
+<td>SuperAdmin</td>
+<td>View security logs</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><code>R60</code> = rate-limited: 1 request per 60 seconds</p>
+</blockquote>
+<hr>
+<h2 id="tech-stack-summary">Tech Stack Summary</h2>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Technology</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Runtime</td>
+<td>Node.js + TypeScript</td>
+</tr>
+<tr>
+<td>Framework</td>
+<td>Express 5</td>
+</tr>
+<tr>
+<td>ORM</td>
+<td>Sequelize 6</td>
+</tr>
+<tr>
+<td>Database</td>
+<td>MSSQL (SQL Server)</td>
+</tr>
+<tr>
+<td>Cache / OTP</td>
+<td>Redis (Upstash)</td>
+</tr>
+<tr>
+<td>Auth</td>
+<td>JWT (role-based secrets) + Passport (Google OAuth)</td>
+</tr>
+<tr>
+<td>Validation</td>
+<td>Joi (with custom injection detection)</td>
+</tr>
+<tr>
+<td>Image Upload</td>
+<td>Cloudinary (primary) or local server</td>
+</tr>
+<tr>
+<td>Payments</td>
+<td>Stripe Checkout</td>
+</tr>
+<tr>
+<td>WhatsApp OTP</td>
+<td>Infobip API</td>
+</tr>
+<tr>
+<td>Logging</td>
+<td>Winston (<code>security.log</code>)</td>
+</tr>
+<tr>
+<td>Email</td>
+<td>Nodemailer (Gmail SMTP)</td>
+</tr>
+<tr>
+<td>File Type Validation</td>
+<td><code>file-type</code> package (reads actual bytes)</td>
+</tr>
+<tr>
+<td>Testing</td>
+<td>Jest (unit) + Cypress (E2E, ~106 tests)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="running-the-project">Running the Project</h2>
+<pre><code class="language-bash"><span class="hljs-comment"># 1. Install dependencies</span>
+npm install
+
+<span class="hljs-comment"># 2. Configure environment</span>
+<span class="hljs-comment"># Edit config/.env with your settings (database, Redis, Stripe, etc.)</span>
+
+<span class="hljs-comment"># 3. Start in development mode</span>
+npm run dev
+
+<span class="hljs-comment"># 4. Server runs on http://localhost:3007</span>
+</code></pre>
+<h3 id="available-scripts">Available Scripts</h3>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>npm run dev</code></td>
+<td>Start dev server with hot reload</td>
+</tr>
+<tr>
+<td><code>npm run build</code></td>
+<td>Compile TypeScript</td>
+</tr>
+<tr>
+<td><code>npm run start</code></td>
+<td>Run compiled JS</td>
+</tr>
+<tr>
+<td><code>npm run test</code></td>
+<td>Run Jest tests</td>
+</tr>
+<tr>
+<td><code>npm run cy:run</code></td>
+<td>Run Cypress E2E tests headlessly</td>
+</tr>
+<tr>
+<td><code>npm run lint</code></td>
+<td>ESLint</td>
+</tr>
+<tr>
+<td><code>npm run format</code></td>
+<td>Prettier</td>
+</tr>
+</tbody>
+</table>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>
