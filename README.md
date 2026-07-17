@@ -43,8 +43,8 @@ A production-grade, full-stack e-commerce platform engineered with a modular mon
 │            ┌────────────┴────────────┐                 │
 │            ▼                         ▼                 │
 │  ┌──────────────┐          ┌──────────────────┐       │
-│  │   MSSQL DB   │          │  Redis Cache     │       │
-│  │  (Sequelize) │          │  (ioredis)       │       │
+│  │   MongoDB    │          │  Redis Cache     │       │
+│  │  (Mongoose)  │          │  (ioredis)       │       │
 │  └──────────────┘          └──────────────────┘       │
 │                                                        │
 │  ┌──────────────────────────────────────────────────┐  │
@@ -69,7 +69,7 @@ e-commerce/
 │   │   │   ├── email/      # Nodemailer transporter
 │   │   │   ├── whatsapp/   # Infobip WhatsApp OTP
 │   │   │   └── utils/      # Validators, query builder, image validation
-│   │   ├── database/       # Sequelize models, associations, Redis connection
+│   │   ├── database/       # Mongoose models, Redis connection
 │   │   └── module/         # Feature modules (auth, user, product, cart, order, ...)
 │   ├── config/             # Environment configuration
 │   ├── cypress/            # E2E tests (106 test cases)
@@ -102,10 +102,6 @@ e-commerce/
 │   ├── messages/           # Translation JSON files (en, fr, ar)
 │   └── next.config.ts
 │
-├── GFS_Didot/              # Font assets
-├── Montserrat/             # Font assets
-├── installation.tex        # Installation guide (LaTeX)
-├── installation.pdf
 └── README.md               # This file
 ```
 
@@ -119,11 +115,11 @@ e-commerce/
 | ---------------------- | -------------------------------------------------------------------- |
 | Runtime                | Node.js + TypeScript 6                                                |
 | Framework              | Express 5                                                            |
-| Database               | MSSQL via Sequelize 6 (ORM) + tedious (driver)                       |
+| Database               | MongoDB via Mongoose 9 (ODM)                                         |
 | Cache                  | Redis 6 via ioredis                                                  |
 | Authentication         | JWT (role-based signing secrets) + Passport.js (Google OAuth 2.0)    |
 | Validation             | Joi with custom injection detection rule                             |
-| File Storage           | Cloudinary (via multer-s3-like upload pipeline)                      |
+| File Storage           | Cloudinary (via multer upload pipeline)                              |
 | Payments               | Stripe (Checkout Sessions + Webhooks) · PayPal (SDK)                 |
 | Messaging              | Nodemailer (email) · Infobip (WhatsApp OTP)                         |
 | Logging                | Winston + daily rotate file + Morgan (HTTP)                          |
@@ -215,12 +211,12 @@ e-commerce/
 ### Prerequisites
 
 - Node.js >= 18
-- MSSQL instance (local or remote)
+- MongoDB instance (local or Atlas)
 - Redis instance (or Upstash)
 - Google OAuth credentials
 - Cloudinary account
 - Stripe account (test mode)
-- Infobiz account (for WhatsApp OTP — optional)
+- Infobip account (for WhatsApp OTP — optional)
 
 ### Quick Start
 
