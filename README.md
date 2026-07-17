@@ -1,4 +1,4 @@
-# i-Fikra E-Commerce Platform
+# E-Commerce Platform
 
 A production-grade, full-stack e-commerce platform engineered with a modular monolith architecture. The system is composed of three independently deployable applications — a backend API server, an admin dashboard, and a public storefront — all sharing a unified data layer and authentication domain.
 
